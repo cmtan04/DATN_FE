@@ -1,0 +1,74 @@
+@import "../../color.scss";
+
+.form-date-picker {
+  // Label styling
+  .ant-form-item-label {
+    label {
+      font-weight: 500;
+      color: $color-text-primary;
+      font-size: 14px;
+      line-height: 1.5;
+      font-family: $font_family_1;
+      flex-direction: row;
+      gap: 4px;
+    }
+  }
+
+  .form-date-picker__picker {
+    border-radius: 6px;
+    border: 1px solid $primary_color;
+    transition: all 0.3s ease;
+    height: 40px;
+    background: #fff;
+    width: 100%;
+
+    &:hover {
+      border-width: 2px;
+    }
+
+    &.ant-picker-focused {
+      border-color: $color-blue-5;
+      box-shadow: 0 0 0 2px $shadow-focus-blue;
+    }
+
+    &.ant-picker-disabled {
+      background-color: $color-gray-2;
+      color: $color-gray-6;
+      cursor: not-allowed;
+    }
+
+    &.ant-picker-status-error {
+      border-color: $color-red-5;
+
+      &:focus,
+      &.ant-picker-focused {
+        box-shadow: 0 0 0 2px $shadow-error-red;
+      }
+    }
+
+    &.ant-picker-status-warning {
+      border-color: $color-orange-5;
+
+      &:focus,
+      &.ant-picker-focused {
+        box-shadow: 0 0 0 2px $shadow-warning-orange;
+      }
+    }
+  }
+
+  // Vertical layout
+  &.form-date-picker--vertical {
+    .ant-form-item-label {
+      text-align: left;
+      margin-bottom: 8px;
+    }
+  }
+
+  // Error message styling
+  .ant-form-item-explain-error {
+    color: $color-red-5;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+}

@@ -1,0 +1,204 @@
+@import "@/color.scss";
+
+.form-input {
+  margin-bottom: 16px;
+
+  .ant-form-item-label {
+    label {
+      font-weight: 500;
+      color: $color-text-primary;
+      font-size: 14px;
+      line-height: 1.5;
+      flex-direction: row;
+      gap: 4px;
+
+      &::before {
+        color: $color-red-5;
+        margin-right: 4px;
+      }
+    }
+  }
+
+  .form-input__number {
+    border-radius: 6px;
+    border: 1px solid $primary_color;
+    transition: all 0.3s ease;
+    width: 100%;
+    height: 40px;
+
+    &:hover {
+      border-width: 2px;
+    }
+
+    &:focus,
+    &.ant-input-number-focused {
+      border-color: $color-blue-5;
+      box-shadow: 0 0 0 2px $shadow-focus-blue;
+    }
+
+    &.ant-input-number-status-error {
+      border-color: $color-red-5;
+
+      &:focus,
+      &.ant-input-number-focused {
+        box-shadow: 0 0 0 2px $shadow-error-red;
+      }
+    }
+
+    &.ant-input-number-status-warning {
+      border-color: $color-orange-5;
+
+      &:focus,
+      &.ant-input-number-focused {
+        box-shadow: 0 0 0 2px $shadow-warning-orange;
+      }
+    }
+
+    // Input field styling
+    .ant-input-number-input {
+      border: none;
+      background: transparent;
+      padding: 4px 8px;
+      height: 38px;
+      line-height: 38px;
+
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+
+      &::placeholder {
+        color: $color-gray-6;
+        font-style: italic;
+      }
+    }
+
+    // Handlers (up/down arrows)
+    .ant-input-number-handler-wrap {
+      border-left: 1px solid $color-border;
+
+      .ant-input-number-handler {
+        border-bottom: 1px solid $color-border;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: #f0f0f0;
+          color: $color-blue-5;
+        }
+
+        &:active {
+          background-color: #e6f7ff;
+        }
+
+        .ant-input-number-handler-up-inner,
+        .ant-input-number-handler-down-inner {
+          color: $color-gray-6;
+          font-size: 12px;
+
+          &:hover {
+            color: $color-blue-5;
+          }
+        }
+      }
+
+      .ant-input-number-handler-down {
+        border-bottom: none;
+      }
+    }
+
+    // Disabled handlers
+    &.ant-input-number-disabled {
+      background-color: $color-gray-2;
+      color: $color-gray-6;
+      cursor: not-allowed;
+      .ant-input-number-handler-wrap {
+        .ant-input-number-handler {
+          cursor: not-allowed;
+
+          &:hover {
+            background-color: transparent;
+            color: $color-gray-6;
+          }
+
+          .ant-input-number-handler-up-inner,
+          .ant-input-number-handler-down-inner {
+            color: $color-gray-6;
+          }
+        }
+      }
+    }
+  }
+
+  // Vertical layout
+  &.form-input--vertical {
+    .ant-form-item-label {
+      text-align: left;
+      margin-bottom: 8px;
+    }
+  }
+
+  // Size variations
+  .ant-input-number-lg {
+    height: 40px;
+    font-size: 16px;
+
+    .ant-input-number-input {
+      height: 38px;
+      line-height: 38px;
+    }
+  }
+
+  .ant-input-number-sm {
+    height: 24px;
+    font-size: 12px;
+
+    .ant-input-number-input {
+      height: 22px;
+      line-height: 22px;
+    }
+  }
+
+  // Prefix and suffix styling
+  .ant-input-number-prefix,
+  .ant-input-number-suffix {
+    color: $color-gray-6;
+    margin: 0 8px;
+  }
+
+  // Error message styling
+  .ant-form-item-explain-error {
+    color: $color-red-5;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  // Warning message styling
+  .ant-form-item-explain-warning {
+    color: $color-orange-5;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .form-input {
+    margin-bottom: 12px;
+
+    .ant-form-item-label {
+      label {
+        font-size: 13px;
+      }
+    }
+
+    .form-input__number {
+      font-size: 14px;
+
+      .ant-input-number-input {
+        font-size: 14px;
+      }
+    }
+  }
+}
