@@ -64,7 +64,7 @@ export const SignIn = () => {
         layout="vertical"
         requiredMark={false}
         onFinish={handleSubmit}
-        initialValues={{ remember: true }}
+        initialValues={{ rememberMe: true }}
       >
         <FormInput
           label="Email"
@@ -96,7 +96,7 @@ export const SignIn = () => {
         />
 
         <div className="auth-page__form-row">
-          <Form.Item name="remember" valuePropName="checked" noStyle>
+          <Form.Item name="rememberMe" valuePropName="checked" noStyle>
             <Checkbox>Ghi nhớ đăng nhập</Checkbox>
           </Form.Item>
           <Button type="link" className="auth-page__link-button">

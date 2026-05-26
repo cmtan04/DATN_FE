@@ -3,7 +3,7 @@ import type { User } from "@modules/user/type";
 export interface LoginRequest {
   email: string;
   password: string;
-  remember?: boolean;
+  rememberMe?: boolean;
 }
 
 export interface RegisterRequest {
@@ -29,5 +29,6 @@ export interface SignInLocationState {
   from?: {
     pathname?: string;
     search?: string;
+    hash?: string;
   };
 };

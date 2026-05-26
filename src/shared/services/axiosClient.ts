@@ -1,3 +1,4 @@
+import { ROUTER_PATH } from "@/app/router/routes";
 import axios, { type InternalAxiosRequestConfig } from "axios";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || "";
@@ -43,7 +44,7 @@ axiosClient.interceptors.response.use(
           .then(res => {
             if (res.status === 200 || res.status === 201) {
               // SỬA 3: Đổi key nhận về thành access_token
-              const newAccessToken = res.data.access_token; 
+              const newAccessToken = res.data.accessToken; 
               
               localStorage.setItem("accessToken", newAccessToken);
               originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -54,12 +55,12 @@ axiosClient.interceptors.response.use(
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             // SỬA 4: Thêm dấu / để đưa về root domain
-            window.location.href = "/auth/login"; 
+            window.location.href = `${ROUTER_PATH.SIGNIN}`; 
             return Promise.reject(refreshError);
           });
       } else {
         localStorage.removeItem("accessToken");
-        window.location.href = "/auth/login";
+        window.location.href = `${ROUTER_PATH.SIGNIN}`;
       }
     }
     
