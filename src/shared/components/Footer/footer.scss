@@ -1,0 +1,96 @@
+@use "@/color.scss" as *;
+
+.footer {
+  width: 100%;
+  background: $primary_color;
+  color: rgba(255, 255, 255, 0.82);
+
+  &__main {
+    width: min(100%, 1180px);
+    margin: 0 auto;
+    padding: 48px 24px 36px;
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: $color-white;
+    color: $primary_color;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  &__logo-text {
+    color: $color-white;
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  &__tagline {
+    max-width: 360px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  &__col-title {
+    margin: 0 0 12px;
+    color: $color-white;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  &__col-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__col-item {
+    span {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 18px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    &__main {
+      padding: 40px 20px 28px;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.web-layout {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.web-layout__content {
+  flex: 1;
+  padding-top: 64px;
+}
+
+@media (max-width: 900px) {
+  .web-layout__content {
+    padding-top: 58px;
+  }
+}

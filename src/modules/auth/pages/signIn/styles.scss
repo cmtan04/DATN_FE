@@ -1,0 +1,159 @@
+@use "@/color.scss" as *;
+
+.auth-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.85fr);
+  min-height: 100svh;
+  background: $background-color;
+  color: $color-text-primary;
+  text-align: left;
+
+  &__form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 32px;
+    background: $color-white;
+  }
+
+  &__form-shell {
+    width: min(100%, 440px);
+  }
+
+  &__title.ant-typography {
+    margin: 0 0 12px;
+    color: $primary_color;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0;
+  }
+
+  &__subtitle.ant-typography {
+    margin: 0 0 28px;
+    color: $text_color_4;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  &__alert {
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+
+  &__form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 4px 0 24px;
+  }
+
+  &__link-button {
+    height: auto;
+    padding: 0;
+    color: $secondary_color;
+  }
+
+  &__submit {
+    height: 44px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  &__switch.ant-typography {
+    margin: 22px 0 0;
+    text-align: center;
+    color: $color-text-primary;
+
+    a {
+      color: $secondary_color;
+      font-weight: 600;
+    }
+  }
+
+  &__visual-panel {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100%;
+    overflow: hidden;
+    padding: 40px;
+    background:
+      radial-gradient(circle at 70% 24%, rgba(255, 255, 255, 0.18), transparent 28%),
+      linear-gradient(135deg, $primary_color 0%, $secondary_color 100%);
+  }
+
+  &__visual-panel::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: linear-gradient(
+      180deg,
+      rgba(0, 41, 58, 0.18) 0%,
+      rgba(0, 41, 58, 0.86) 100%
+    );
+  }
+
+  &__visual-copy {
+    position: relative;
+    z-index: 1;
+    max-width: 360px;
+
+    .ant-typography {
+      color: $color-white;
+    }
+
+    h2.ant-typography {
+      margin: 0 0 12px;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    span.ant-typography {
+      display: block;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+  }
+
+  .ant-form-item {
+    margin-bottom: 18px;
+  }
+
+  .ant-checkbox-wrapper {
+    color: $color-text-primary;
+  }
+}
+
+@media (max-width: 900px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+
+    &__form-panel {
+      min-height: 100svh;
+      padding: 40px 20px;
+    }
+
+    &__visual-panel {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    &__title.ant-typography {
+      font-size: 32px;
+    }
+
+    &__form-row {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+}
