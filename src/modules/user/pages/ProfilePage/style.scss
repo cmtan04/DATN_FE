@@ -1,0 +1,122 @@
+.profile-page {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 48px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0 0 8px;
+      color: #00293a;
+      font-size: 34px;
+      line-height: 1.25;
+    }
+
+    .ant-typography {
+      margin: 0;
+      color: rgba(0, 0, 0, 0.62);
+    }
+  }
+
+  &__summary,
+  &__upload-card,
+  &__info-card {
+    border-radius: 8px;
+  }
+
+  &__summary {
+    text-align: center;
+  }
+
+  &__avatar {
+    width: 132px;
+    height: 132px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #f0f5ff;
+    font-size: 52px;
+  }
+
+  &__identity {
+    width: 100%;
+
+    h2 {
+      margin: 0 0 4px;
+      color: #00293a;
+      font-size: 22px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .ant-typography {
+      color: rgba(0, 0, 0, 0.58);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__uploader {
+    .ant-upload {
+      border-radius: 8px;
+    }
+  }
+
+  &__info-card {
+    margin-top: 24px;
+  }
+
+  &__info-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  &__info-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    span {
+      color: rgba(0, 0, 0, 0.55);
+    }
+
+    strong {
+      color: #00293a;
+      font-weight: 600;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: min(100% - 20px, 1120px);
+    padding-top: 24px;
+
+    &__header {
+      flex-direction: column;
+
+      h1 {
+        font-size: 28px;
+      }
+    }
+
+    &__info-item {
+      flex-direction: column;
+      gap: 4px;
+
+      strong {
+        text-align: left;
+      }
+    }
+  }
+}

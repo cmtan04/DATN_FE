@@ -22,9 +22,9 @@ import {
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { ROUTER_PATH } from "@app/router/routes";
-import { getLocationsNearCoordinates } from "../../api/location.api";
-import { useMapAddressPicker } from "../../hooks/useMapAddressPicker";
-import type { LocationDto } from "../../types";
+import { getLocationsNearCoordinates } from "../../location/api/location.api";
+import { useMapAddressPicker } from "../../location/hooks/useMapAddressPicker";
+import type { LocationDto } from "../../location/types";
 import "./style.scss";
 
 const SEARCH_RADIUS_OPTIONS = [1, 3, 5, 10] as const;
@@ -53,7 +53,7 @@ interface LocationMapCanvasProps {
   radiusKm: number;
   locations: LocationDto[];
   onCoordinateSelect: (value: { lat: number; lng: number }) => void;
-  onOpenDetail: (code: string) => void;
+  onOpenDetail: (location: LocationDto) => void;
 }
 
 const parseCoordinate = (value?: string | number | null) => {
@@ -66,13 +66,11 @@ const parseCoordinate = (value?: string | number | null) => {
 const formatPrice = (price: number, unit?: string) =>
   `${price.toLocaleString()} VND${unit ? `/${unit}` : ""}`;
 
-const formatDistance = (distanceKm?: number) =>
-  typeof distanceKm === "number" ? `${distanceKm.toFixed(1)} km` : undefined;
-
-const getLocationPosition = (location: LocationDto): [number, number] | null => {
-  const primaryAddress = location.address?.[0];
-  const lat = parseCoordinate(primaryAddress?.addressLat);
-  const lng = parseCoordinate(primaryAddress?.addressLong);
+const getLocationPosition = (
+  location: LocationDto,
+): [number, number] | null => {
+  const lat = parseCoordinate(location.address?.lat);
+  const lng = parseCoordinate(location.address?.lng);
 
   if (lat === undefined || lng === undefined) {
     return null;
@@ -125,48 +123,45 @@ const LocationMapCanvas = ({
     <Circle
       center={center}
       radius={radiusKm * 1000}
-      pathOptions={{ color: "#1677ff", fillColor: "#1677ff", fillOpacity: 0.08 }}
+      pathOptions={{
+        color: "#1677ff",
+        fillColor: "#1677ff",
+        fillOpacity: 0.08,
+      }}
     />
     <Marker position={center} icon={SearchIcon} />
 
     {locations.map((location) => {
       const position = getLocationPosition(location);
-      const address = location.address?.[0]?.fullAddress;
-      const price = location.locationPrice || location.locationPriceAfterDeal;
+      const address = location.address?.fullAddress;
+      const price = location.price;
 
       if (!position) {
         return null;
       }
 
       return (
-        <Marker key={location.locationCode} position={position}>
+        <Marker key={location.id} position={position}>
           <Popup>
             <div className="location-map__popup">
-              {location.locationLogo && (
+              {location.thumbnailMedia?.url && (
                 <img
                   className="location-map__popup-image"
-                  src={location.locationLogo}
+                  src={location.thumbnailMedia.url}
                   alt=""
                 />
               )}
-              <h3 className="location-map__popup-title">
-                {location.locationName}
-              </h3>
+              <h3 className="location-map__popup-title">{location.name}</h3>
               <p className="location-map__popup-address">
                 <EnvironmentOutlined /> {address}
               </p>
               <p className="location-map__popup-price">
-                <TagOutlined /> {formatPrice(price, location.locationPriceUnit)}
+                <TagOutlined /> {formatPrice(price, location.priceUnit)}
               </p>
-              {formatDistance(location.distanceKm) && (
-                <p className="location-map__popup-distance">
-                  Cach {formatDistance(location.distanceKm)}
-                </p>
-              )}
               <Button
                 type="primary"
                 block
-                onClick={() => onOpenDetail(location.locationCode)}
+                onClick={() => onOpenDetail(location)}
               >
                 Xem chi tiet
               </Button>
@@ -210,12 +205,14 @@ export const LocationMap = () => {
 
   const locations = data?.data ?? [];
   const errorMessage = isAxiosError(error)
-    ? (error.response?.data as { message?: string } | undefined)?.message ??
-      DEFAULT_MESSAGE
+    ? ((error.response?.data as { message?: string } | undefined)?.message ??
+      DEFAULT_MESSAGE)
     : DEFAULT_MESSAGE;
 
-  const handleOpenDetail = (code: string) => {
-    navigate(ROUTER_PATH.LOCATION_DETAIL.replace(":code", code));
+  const handleOpenDetail = (locationItem: LocationDto) => {
+    navigate(
+      ROUTER_PATH.LOCATION_DETAIL.replace(":id", String(locationItem.id)),
+    );
   };
 
   return (
@@ -302,7 +299,7 @@ export const LocationMap = () => {
             <span>
               {isFetching && !isLoading
                 ? "Dang cap nhat..."
-                : `${data?.total ?? locations.length} ket qua`}
+                : `${data?.meta.total ?? locations.length} ket qua`}
             </span>
           </div>
 
@@ -328,28 +325,23 @@ export const LocationMap = () => {
           {!isLoading &&
             !isError &&
             locations.map((location) => {
-              const address = location.address?.[0]?.fullAddress;
-              const price =
-                location.locationPrice || location.locationPriceAfterDeal;
+              const address = location.address?.fullAddress;
+              const price = location.price;
+              const image = location.thumbnailMedia?.url;
 
               return (
                 <button
-                  key={location.locationCode}
+                  key={location.id}
                   type="button"
                   className="location-map__item"
-                  onClick={() => handleOpenDetail(location.locationCode)}
+                  onClick={() => handleOpenDetail(location)}
                 >
-                  {location.locationLogo && (
-                    <img src={location.locationLogo} alt="" />
-                  )}
+                  {image && <img src={image} alt="" />}
                   <span className="location-map__item-body">
-                    <strong>{location.locationName}</strong>
+                    <strong>{location.name}</strong>
                     <span>{address}</span>
                     <span className="location-map__item-footer">
-                      {formatPrice(price, location.locationPriceUnit)}
-                      {formatDistance(location.distanceKm) && (
-                        <em>{formatDistance(location.distanceKm)}</em>
-                      )}
+                      {formatPrice(price, location.priceUnit)}
                     </span>
                   </span>
                 </button>

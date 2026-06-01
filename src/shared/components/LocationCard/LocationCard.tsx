@@ -1,37 +1,38 @@
 import { Button, Card, Rate, Space, Tag, Typography } from "antd";
+import type { LocationDto } from "@shared/types/location";
 import "./locationCard.scss";
 
 export interface LocationCardProps {
-  code: string;
-  title: string;
-  address: string;
-  priceLabel: string;
-  areaLabel: string;
-  typeLabel: string;
-  imageUrl?: string;
-  rating: number;
-  viewCount: number;
+  location: LocationDto;
   isFeatured?: boolean;
   isNew?: boolean;
-  onViewDetail?: (code: string) => void;
+  onViewDetail?: (id: string | number) => void;
 }
 
+const DEFAULT_ADDRESS = "Chua cap nhat dia chi";
+const DEFAULT_TYPE = "Chua phan loai";
+
+const formatLocationPrice = (price: number, priceUnit: string) =>
+  `${price.toLocaleString("vi-VN")} ${priceUnit}`;
+
+const formatLocationArea = (area: number) => `${area} m2`;
+
 export const LocationCard = ({
-  code,
-  title,
-  address,
-  priceLabel,
-  areaLabel,
-  typeLabel,
-  imageUrl,
-  rating,
-  viewCount,
+  location,
   isFeatured = false,
   isNew = false,
   onViewDetail,
 }: LocationCardProps) => {
+  const title = location.name;
+  const address = location.address?.fullAddress ?? DEFAULT_ADDRESS;
+  const priceLabel = formatLocationPrice(location.price, location.priceUnit);
+  const areaLabel = formatLocationArea(location.area);
+  const typeLabel = location.type?.name ?? DEFAULT_TYPE;
+  const imageUrl = location.thumbnailMedia?.url;
+  const rating = location.averageRating ?? 0;
+
   const handleViewDetail = () => {
-    onViewDetail?.(code);
+    onViewDetail?.(location.id);
   };
 
   return (
@@ -46,8 +47,8 @@ export const LocationCard = ({
             <div className="location-card__media-fallback" />
           )}
           <div className="location-card__tags">
-            {isFeatured ? <Tag color="gold">Nổi bật</Tag> : null}
-            {isNew ? <Tag color="blue">Mới</Tag> : null}
+            {isFeatured ? <Tag color="gold">Noi bat</Tag> : null}
+            {isNew ? <Tag color="blue">Moi</Tag> : null}
           </div>
         </div>
       }
@@ -71,14 +72,13 @@ export const LocationCard = ({
         <div className="location-card__footer">
           <div className="location-card__rating">
             <Rate disabled allowHalf value={rating} />
-            <span>{viewCount.toLocaleString("vi-VN")} lượt xem</span>
+            <span>{rating.toLocaleString("vi-VN")} diem</span>
           </div>
           <Button size="small" type="primary" onClick={handleViewDetail}>
-            Chi tiết
+            Chi tiet
           </Button>
         </div>
       </Space>
     </Card>
   );
 };
-

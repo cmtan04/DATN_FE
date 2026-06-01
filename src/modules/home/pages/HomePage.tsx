@@ -15,7 +15,7 @@ export const HomePage = () => {
     handleKeywordNavigate,
     handleViewDetail,
     handleRegionClick,
-    handleViewAll,
+    handleViewHighestRating,
     handleViewNewest,
   } = useHomePage();
 
@@ -55,8 +55,9 @@ export const HomePage = () => {
           actionLabel="Xem tất cả"
           locations={data?.featuredLocations}
           isLoading={isLoading}
-          onActionClick={handleViewAll}
+          onActionClick={handleViewHighestRating}
           onViewDetail={handleViewDetail}
+          isNew={false}
         />
 
         <HomeLocationSection
@@ -67,6 +68,7 @@ export const HomePage = () => {
           isLoading={isLoading}
           onActionClick={handleViewNewest}
           onViewDetail={handleViewDetail}
+          isNew={true}
         />
 
         <HomeRegionSection

@@ -31,7 +31,7 @@
   .right {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
   }
 
   &-logo {
@@ -103,6 +103,36 @@
   }
 }
 
+.topbar__host-button {
+  max-width: 220px;
+  font-weight: 700;
+}
+
+.topbar__notification-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary_color;
+  font-size: 18px;
+}
+
+.topbar__avatar-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgba(0, 41, 58, 0.12);
+  border-radius: 50%;
+  background: $color-white;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $secondary_color;
+  }
+}
+
 .topbar__hamburger {
   display: inline-flex;
   width: 42px;
@@ -164,6 +194,72 @@
     gap: 10px;
     padding: 16px;
   }
+
+  .topbar__drawer-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid rgba(0, 41, 58, 0.1);
+    border-radius: 8px;
+    background: rgba(0, 41, 58, 0.03);
+
+    div {
+      min-width: 0;
+    }
+
+    strong,
+    span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    strong {
+      color: $primary_color;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    span {
+      color: rgba(0, 41, 58, 0.62);
+      font-size: 12px;
+    }
+  }
+
+  .topbar__drawer-account-menu {
+    border-inline-end: 0 !important;
+
+    .ant-menu-item {
+      border-radius: 8px;
+      font-weight: 700;
+    }
+  }
+}
+
+.topbar__host-modal {
+  width: 100%;
+}
+
+.topbar__notifications {
+  max-height: 360px;
+  overflow-y: auto;
+  width: min(360px, calc(100vw - 48px));
+
+  .ant-list-item {
+    border-radius: 8px;
+    cursor: pointer;
+    padding-inline: 10px;
+
+    &:hover {
+      background: rgba(0, 41, 58, 0.06);
+    }
+  }
+
+  .topbar__notification--unread {
+    background: rgba(0, 96, 156, 0.1);
+  }
 }
 
 @media (max-width: 900px) {
@@ -192,4 +288,3 @@
     }
   }
 }
-

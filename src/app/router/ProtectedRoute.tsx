@@ -1,6 +1,6 @@
 import { Spin } from "antd";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "@app/providers/authContext";
+import { useAuth } from "@app/providers/useAuth";
 import { ROUTER_PATH } from "./routes";
 
 export const ProtectedRoute = () => {

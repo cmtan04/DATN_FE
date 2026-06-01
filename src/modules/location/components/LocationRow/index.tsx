@@ -14,27 +14,25 @@ import {
 import "./style.scss";
 
 interface LocationRowProps {
-  code: string;
+  id: string | number;
   typeName: string;
   name: string;
-  description?: string;
   address?: string;
   rate?: number;
   price?: number;
   priceUnit?: string;
   image?: string;
   isFavourite: boolean;
-  onClick?: (code: string) => void;
+  onClick?: (id: string | number) => void;
 }
 
 export const LocationRow = (props: LocationRowProps) => {
   const [isFavourite, setIsFavourite] = useState(props.isFavourite);
 
   const favoritePayload: FavoriteLocationPayload = {
-    locationCode: props.code,
+    id: props.id,
     typeName: props.typeName,
     name: props.name,
-    description: props.description,
     address: props.address,
     rate: props.rate,
     price: props.price,
@@ -50,20 +48,20 @@ export const LocationRow = (props: LocationRowProps) => {
 
   const handleShare = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const detailUrl = `${window.location.origin}/locations/${props.code}`;
+    const detailUrl = `${window.location.origin}/locations/${props.id}`;
     void navigator.clipboard?.writeText(detailUrl);
   };
 
   return (
     <article
       className="location-row-port"
-      onClick={() => props.onClick?.(props.code)}
+      onClick={() => props.onClick?.(props.id)}
       role="button"
       tabIndex={0}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          props.onClick?.(props.code);
+          props.onClick?.(props.id);
         }
       }}
     >
@@ -92,9 +90,6 @@ export const LocationRow = (props: LocationRowProps) => {
         <p className="location-row-port__address">
           <EnvironmentOutlined /> {props.address}
         </p>
-        <Tooltip title={props.description}>
-          <p className="location-row-port__description">{props.description}</p>
-        </Tooltip>
         <strong>
           {props.price?.toLocaleString()} VND/ {props.priceUnit || ""}
         </strong>

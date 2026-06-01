@@ -96,4 +96,20 @@
     font-size: 13px;
     font-weight: 600;
   }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    span {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(0, 96, 156, 0.08);
+      color: rgba(0, 41, 58, 0.78);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+  }
 }

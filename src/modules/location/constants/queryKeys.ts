@@ -1,0 +1,46 @@
+import type { LocationQueryFilter } from "../api/location.api";
+
+export const LOCATION_QUERY_KEYS = {
+  list: (filter: LocationQueryFilter) =>
+    [
+      "locations",
+      "list",
+      filter.searchValue ?? filter.keyword,
+      filter.locationTypeId,
+      filter.addressRegion ?? filter.region,
+      filter.amenityKeywords?.join(","),
+      filter.bedroomCount,
+      filter.ownerLiving,
+      filter.privateBathroom,
+      filter.furnitureLevel,
+      filter.minPrice,
+      filter.maxPrice,
+      filter.minArea,
+      filter.maxArea,
+      filter.sortBy,
+      filter.sortOrder,
+    ] as const,
+  map: (filter: LocationQueryFilter, total: number) =>
+    [
+      "locations",
+      "map",
+      filter.searchValue ?? filter.keyword,
+      filter.locationTypeId,
+      filter.addressRegion ?? filter.region,
+      filter.amenityKeywords?.join(","),
+      filter.bedroomCount,
+      filter.ownerLiving,
+      filter.privateBathroom,
+      filter.furnitureLevel,
+      filter.minPrice,
+      filter.maxPrice,
+      filter.minArea,
+      filter.maxArea,
+      filter.sortBy,
+      filter.sortOrder,
+      total,
+    ] as const,
+  detail: (id: string | number) => ["locations", "detail", id] as const,
+  related: (id: string | number) => ["locations", "similar", id] as const,
+  types: ["locations", "types"] as const,
+};

@@ -2,9 +2,18 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { WebLayout } from "@app/layouts";
 import { SignIn, SignUp } from "@modules/auth";
 import { HomePage } from "@modules/home";
-import { LocationList, LocationMap } from "@modules/location";
+import {
+  LocationBooking,
+  LocationDetail,
+  LocationList,
+  LocationMap,
+} from "@modules/location";
+import { ProfilePage } from "@modules/user";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ROUTER_NAME, ROUTER_PATH } from "./routes";
+
+const UserBookingsPlaceholder = () => <div>Lịch sử đặt phòng</div>;
+const UserFavoritesPlaceholder = () => <div>Danh sách phòng yêu thích</div>;
 
 export const WebRouter = () => (
   <Routes>
@@ -15,14 +24,24 @@ export const WebRouter = () => (
     <Route element={<WebLayout />}>
       <Route path={ROUTER_NAME.HOME} element={<HomePage />} />
       <Route path={ROUTER_NAME.LOCATIONS} element={<LocationList />} />
-      <Route
-        path={ROUTER_NAME.LOCATION_DETAIL}
-        element={<div>Location Detail</div>}
-      />
+      <Route path={ROUTER_NAME.LOCATION_DETAIL} element={<LocationDetail />} />
       <Route path={ROUTER_NAME.MAP} element={<LocationMap />} />
 
       <Route element={<ProtectedRoute />}>
-        <Route path={ROUTER_NAME.PROFILE} element={<div>Profile</div>} />
+        <Route
+          path={ROUTER_NAME.LOCATION_BOOKING}
+          element={<LocationBooking />}
+        />
+        <Route path={ROUTER_NAME.PROFILE} element={<ProfilePage />} />
+        <Route path={ROUTER_NAME.USER_PROFILE} element={<ProfilePage />} />
+        <Route
+          path={ROUTER_NAME.USER_BOOKINGS}
+          element={<UserBookingsPlaceholder />}
+        />
+        <Route
+          path={ROUTER_NAME.USER_FAVORITES}
+          element={<UserFavoritesPlaceholder />}
+        />
         <Route path={ROUTER_NAME.CHAT} element={<div>Chat</div>} />
         <Route
           path={ROUTER_NAME.MY_LOCATIONS}

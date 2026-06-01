@@ -1,7 +1,7 @@
 import { Alert, App as AntdApp, Button, Checkbox, Form, Typography } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
-import { useAuth } from "@app/providers/authContext";
+import { useAuth } from "@app/providers/useAuth";
 import { FormInput } from "@shared/components/FormInput/formInput";
 import { FormPassword } from "@shared/components/FormPassword/formPassword";
 import { AuthLayout } from "../../components/AuthLayout";

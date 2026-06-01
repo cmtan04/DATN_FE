@@ -9,7 +9,8 @@ interface HomeLocationSectionProps {
   locations?: HomeLocation[];
   isLoading: boolean;
   onActionClick: () => void;
-  onViewDetail: (code: string) => void;
+  onViewDetail: (id: string | number) => void;
+  isNew?: boolean;
 }
 
 const skeletonItems = Array.from({ length: 3 }, (_, index) => index);
@@ -22,6 +23,7 @@ export const HomeLocationSection = ({
   isLoading,
   onActionClick,
   onViewDetail,
+  isNew = false,
 }: HomeLocationSectionProps) => (
   <section className="home-section">
     <div className="home-section__header">
@@ -35,7 +37,7 @@ export const HomeLocationSection = ({
     {isLoading ? (
       <Row gutter={[14, 14]}>
         {skeletonItems.map((item) => (
-          <Col xs={24} sm={12} lg={8} key={item}>
+          <Col xs={24} sm={12} lg={6} key={item}>
             <Skeleton.Node active className="home-section__skeleton" />
           </Col>
         ))}
@@ -43,8 +45,8 @@ export const HomeLocationSection = ({
     ) : locations.length > 0 ? (
       <Row gutter={[14, 14]}>
         {locations.map((location) => (
-          <Col xs={24} sm={12} lg={8} key={location.code}>
-            <LocationCard {...location} onViewDetail={onViewDetail} />
+          <Col xs={24} sm={12} lg={6} key={location.id}>
+            <LocationCard location={location} onViewDetail={onViewDetail} isFeatured={!isNew} isNew={isNew} />
           </Col>
         ))}
       </Row>

@@ -4,10 +4,9 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router/routes";
 import {
   getLocationByFilter,
-  normalizeLocationTypeCode,
+  type LocationQueryFilter,
 } from "../api/location.api";
-import { LocationEndpoint } from "../api/location.endpoints";
-import type { ProfileLocationFilter } from "../types";
+import { LOCATION_QUERY_KEYS } from "../constants/queryKeys";
 import { buildURLFromFilter, parseFilterFromURL } from "../utils/filter";
 
 const DEFAULT_SEARCH_SUGGESTIONS = [
@@ -43,8 +42,10 @@ export const useLocationList = () => {
     const params = new URLSearchParams(searchParams);
 
     if (routeState.rent) {
-      const typeCode = normalizeLocationTypeCode(routeState.rent);
-      if (typeCode) params.set("typeCode", typeCode);
+      const locationTypeId = Number(routeState.rent);
+      if (!isNaN(locationTypeId)) {
+        params.set("locationTypeId", String(locationTypeId));
+      }
     }
     if (routeState.location) {
       params.set("region", routeState.location);
@@ -74,32 +75,24 @@ export const useLocationList = () => {
     error,
     refetch,
   } = useInfiniteQuery({
-    queryKey: [
-      LocationEndpoint.GET_LOCATION_BY_FILTER,
-      filter.searchValue,
-      filter.locationType,
-      filter.addressCity,
-      filter.addressRegion,
-      filter.minPrice,
-      filter.maxPrice,
-      filter.minArea,
-      filter.maxArea,
-      filter.sortBy,
-      filter.sortOrder,
-    ],
+    queryKey: LOCATION_QUERY_KEYS.list(filter),
     queryFn: ({ pageParam = 1 }) =>
       getLocationByFilter({ ...filter, page: pageParam as number }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      const currentPage = Number(lastPage.page) || 1;
-      const totalPages = Number(lastPage.totalPages) || 1;
+      const currentPage = Number(lastPage.meta.page) || 1;
+      const totalPages = Number(lastPage.meta.totalPages) || 1;
       return currentPage < totalPages ? currentPage + 1 : undefined;
     },
     placeholderData: keepPreviousData,
   });
 
+  const locations = locationData?.pages.flatMap((page) => page.data) ?? [];
+  const total = locationData?.pages[0]?.meta.total ?? 0;
+  const isEmpty = !isLoading && !isError && locations.length === 0;
+
   const updateFilter = useCallback(
-    (newFilter: ProfileLocationFilter) => {
+    (newFilter: LocationQueryFilter) => {
       const nextParams = buildURLFromFilter({
         ...newFilter,
         page: undefined,
@@ -117,32 +110,34 @@ export const useLocationList = () => {
       const trimmed = keyword.trim();
       if (!trimmed) return;
       updateFilter({
+        ...filter,
         searchValue: trimmed,
       });
     },
-    [updateFilter],
+    [filter, updateFilter],
   );
 
   const handleFilterApply = useCallback(
-    (sidebarFilter: ProfileLocationFilter) => {
+    (sidebarFilter: LocationQueryFilter) => {
       updateFilter({
         ...sidebarFilter,
         searchValue: filter.searchValue,
-        addressRegion: filter.addressRegion,
       });
     },
-    [filter.addressRegion, filter.searchValue, updateFilter],
+    [filter.searchValue, updateFilter],
   );
 
-  const handleCardClick = useCallback(
-    (code: string) => {
-      navigate(ROUTER_PATH.LOCATION_DETAIL.replace(":code", code));
+  const openLocationDetail = useCallback(
+    (id: string | number) => {
+      navigate(ROUTER_PATH.LOCATION_DETAIL.replace(":id", String(id)));
     },
     [navigate],
   );
 
   return {
-    locationData,
+    locations,
+    total,
+    isEmpty,
     isLoading,
     isFetching,
     isFetchingNextPage,
@@ -156,7 +151,7 @@ export const useLocationList = () => {
     updateFilter,
     handleFilterApply,
     handleSearch,
-    handleCardClick,
+    openLocationDetail,
     isFilterOpen,
     setIsFilterOpen,
   };

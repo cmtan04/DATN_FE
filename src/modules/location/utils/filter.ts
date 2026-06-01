@@ -1,4 +1,4 @@
-import type { ProfileLocationFilter } from "../types";
+import type { LocationQueryFilter } from "../api/location.api";
 
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_LIMIT = 6;
@@ -12,13 +12,32 @@ const parsePositiveInt = (value?: string | null): number | undefined => {
   return Number.isInteger(n) && n > 0 ? n : undefined;
 };
 
+const parseCsv = (value?: string | null): string[] | undefined => {
+  const values = value
+    ?.split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return values?.length ? values : undefined;
+};
+
+const parseOptionalBoolean = (value?: string | null): boolean | undefined => {
+  if (value === "true" || value === "1") return true;
+  if (value === "false" || value === "0") return false;
+  return undefined;
+};
+
 export const parseFilterFromURL = (
   searchParams: URLSearchParams,
-): ProfileLocationFilter => ({
+): LocationQueryFilter => ({
   searchValue: cleanString(searchParams.get("q")),
-  locationType: cleanString(searchParams.get("typeCode")),
-  addressCity: cleanString(searchParams.get("city")),
+  locationTypeId: parsePositiveInt(searchParams.get("locationTypeId")),
   addressRegion: cleanString(searchParams.get("region")),
+  amenityKeywords: parseCsv(searchParams.get("amenities")),
+  bedroomCount: parsePositiveInt(searchParams.get("bedrooms")),
+  ownerLiving: parseOptionalBoolean(searchParams.get("ownerLiving")),
+  privateBathroom: parseOptionalBoolean(searchParams.get("privateBathroom")),
+  furnitureLevel: cleanString(searchParams.get("furniture")),
   minPrice: parsePositiveInt(searchParams.get("minPrice")),
   maxPrice: parsePositiveInt(searchParams.get("maxPrice")),
   minArea: parsePositiveInt(searchParams.get("minArea")),
@@ -30,14 +49,26 @@ export const parseFilterFromURL = (
 });
 
 export const buildURLFromFilter = (
-  filter: ProfileLocationFilter,
+  filter: LocationQueryFilter,
 ): URLSearchParams => {
   const params = new URLSearchParams();
 
   if (filter.searchValue) params.set("q", filter.searchValue);
-  if (filter.locationType) params.set("typeCode", filter.locationType);
-  if (filter.addressCity) params.set("city", filter.addressCity);
+  if (filter.locationTypeId) {
+    params.set("locationTypeId", String(filter.locationTypeId));
+  }
   if (filter.addressRegion) params.set("region", filter.addressRegion);
+  if (filter.amenityKeywords?.length) {
+    params.set("amenities", filter.amenityKeywords.join(","));
+  }
+  if (filter.bedroomCount) params.set("bedrooms", String(filter.bedroomCount));
+  if (filter.ownerLiving !== undefined) {
+    params.set("ownerLiving", String(filter.ownerLiving));
+  }
+  if (filter.privateBathroom !== undefined) {
+    params.set("privateBathroom", String(filter.privateBathroom));
+  }
+  if (filter.furnitureLevel) params.set("furniture", filter.furnitureLevel);
   if (filter.minPrice !== undefined) {
     params.set("minPrice", String(filter.minPrice));
   }

@@ -24,11 +24,11 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 interface LocationListMapProps {
   locations: LocationDto[];
-  onOpenDetail: (code: string) => void;
+  onOpenDetail: (id: string | number) => void;
 }
 
 interface MappedLocation {
-  code: string;
+  id: string | number;
   name: string;
   image?: string;
   price: number;
@@ -82,21 +82,20 @@ export const LocationListMap = ({
     () =>
       locations
         .map<MappedLocation | undefined>((location) => {
-          const primaryAddress = location.address?.[0];
-          const lat = parseCoordinate(primaryAddress?.addressLat);
-          const lng = parseCoordinate(primaryAddress?.addressLong);
+          const lat = parseCoordinate(location.address?.lat);
+          const lng = parseCoordinate(location.address?.lng);
 
           if (lat === undefined || lng === undefined) {
             return undefined;
           }
 
           return {
-            code: location.locationCode,
-            name: location.locationName,
-            image: location.locationLogo,
-            price: location.locationPrice || location.locationPriceAfterDeal,
-            priceUnit: location.locationPriceUnit,
-            address: primaryAddress?.fullAddress,
+            id: location.id,
+            name: location.name,
+            image: location.thumbnailMedia?.url,
+            price: location.price,
+            priceUnit: location.priceUnit,
+            address: location.address?.fullAddress,
             position: [lat, lng],
           };
         })
@@ -138,7 +137,7 @@ export const LocationListMap = ({
         />
 
         {mappedLocations.map((location) => (
-          <Marker key={location.code} position={location.position}>
+          <Marker key={location.id} position={location.position}>
             <Popup>
               <div className="location-list-map__popup">
                 {location.image && (
@@ -161,7 +160,7 @@ export const LocationListMap = ({
                 <Button
                   type="primary"
                   block
-                  onClick={() => onOpenDetail(location.code)}
+                  onClick={() => onOpenDetail(location.id)}
                 >
                   Xem chi tiet
                 </Button>

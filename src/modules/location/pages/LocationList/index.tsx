@@ -4,18 +4,16 @@ import {
   EnvironmentOutlined,
   FilterOutlined,
 } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
 import { Button, Col, Grid, Row, Tooltip } from "antd";
 import { isAxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Banner } from "@shared/components";
-import { getLocationByFilter } from "../../api/location.api";
-import { LocationEndpoint } from "../../api/location.endpoints";
 import { LocationCard } from "../../components/LocationCard";
 import { LocationFilterDrawer } from "../../components/LocationFilterDrawer";
 import { LocationListMap } from "../../components/LocationListMap";
 import { LocationRow } from "../../components/LocationRow";
 import { useLocationList } from "../../hooks/useLocationList";
+import { useLocationMapLocations } from "../../hooks/useLocationMapLocations";
 import type { LocationDto } from "../../types";
 import { isFavoriteLocation } from "../../utils/favoriteLocations";
 import "./style.scss";
@@ -26,7 +24,9 @@ const DEFAULT_MESSAGE = "Da co loi xay ra. Vui long thu lai.";
 
 export const LocationList = () => {
   const {
-    locationData,
+    locations,
+    total,
+    isEmpty,
     isLoading,
     isFetching,
     isFetchingNextPage,
@@ -39,15 +39,13 @@ export const LocationList = () => {
     filter,
     handleFilterApply,
     handleSearch,
-    handleCardClick,
+    openLocationDetail,
     isFilterOpen,
     setIsFilterOpen,
   } = useLocationList();
 
   const [viewMode, setViewMode] = useState<LocationViewMode>("grid");
   const loadMoreRef = useRef<HTMLDivElement>(null);
-  const locations = locationData?.pages?.flatMap((page) => page.data) ?? [];
-  const locationTotal = locationData?.pages?.[0]?.total ?? 0;
   const screens = Grid.useBreakpoint();
   const isDesktop = screens.lg;
   const isSmall = screens.sm;
@@ -56,34 +54,15 @@ export const LocationList = () => {
       DEFAULT_MESSAGE
     : DEFAULT_MESSAGE;
   const shouldFetchMapLocations =
-    viewMode === "map" && locationTotal > locations.length;
+    viewMode === "map" && total > locations.length;
 
   const { data: mapLocationData, isFetching: isFetchingMapLocations } =
-    useQuery({
-      queryKey: [
-        LocationEndpoint.GET_LOCATION_BY_FILTER,
-        "map",
-        filter.searchValue,
-        filter.locationType,
-        filter.addressCity,
-        filter.addressRegion,
-        filter.minPrice,
-        filter.maxPrice,
-        filter.minArea,
-        filter.maxArea,
-        filter.sortBy,
-        filter.sortOrder,
-        locationTotal,
-      ],
-      queryFn: () =>
-        getLocationByFilter({
-          ...filter,
-          page: 1,
-          limit: locationTotal,
-        }),
-      enabled: shouldFetchMapLocations,
-    });
+    useLocationMapLocations(filter, total, shouldFetchMapLocations);
   const mapLocations = mapLocationData?.data ?? locations;
+
+  const handleMapOpenDetail = (id: string | number) => {
+    openLocationDetail(id);
+  };
 
   useEffect(() => {
     if (viewMode === "map" || !hasNextPage || isFetchingNextPage) return;
@@ -105,24 +84,27 @@ export const LocationList = () => {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage, viewMode]);
 
   const renderLocationCard = (locationItem: LocationDto) => {
-    const itemProps = {
-      code: locationItem.locationCode,
-      typeName: locationItem.typeName,
-      name: locationItem.locationName,
-      description: locationItem.locationDescription,
-      address: locationItem.address?.[0]?.fullAddress,
-      rate: locationItem.locationRate,
-      price: locationItem.locationPrice || locationItem.locationPriceAfterDeal,
-      priceUnit: locationItem.locationPriceUnit,
-      image: locationItem.locationLogo,
-      isFavourite: isFavoriteLocation(locationItem.locationCode),
-      onClick: handleCardClick,
+    const rowProps = {
+      id: locationItem.id,
+      typeName: locationItem.type?.name ?? "Chua phan loai",
+      name: locationItem.name,
+      address: locationItem.address?.fullAddress,
+      rate: locationItem.averageRating,
+      price: locationItem.price,
+      priceUnit: locationItem.priceUnit,
+      image: locationItem.thumbnailMedia?.url,
+      isFavourite: isFavoriteLocation(locationItem.id),
+      onClick: () => openLocationDetail(locationItem.id),
     };
 
     return viewMode === "grid" && isSmall ? (
-      <LocationCard {...itemProps} />
+      <LocationCard
+        location={locationItem}
+        isFavourite={isFavoriteLocation(locationItem.id)}
+        onClick={openLocationDetail}
+      />
     ) : (
-      <LocationRow {...itemProps} />
+      <LocationRow {...rowProps} />
     );
   };
 
@@ -161,7 +143,7 @@ export const LocationList = () => {
       );
     }
 
-    if (locations.length === 0) {
+    if (isEmpty) {
       return (
         <div className="location-page__state">
           <p className="location-page__state-title">
@@ -183,7 +165,7 @@ export const LocationList = () => {
             )}
             <LocationListMap
               locations={mapLocations}
-              onOpenDetail={handleCardClick}
+              onOpenDetail={handleMapOpenDetail}
             />
           </>
         ) : (
@@ -193,7 +175,7 @@ export const LocationList = () => {
                 xs={24}
                 sm={viewMode === "grid" ? 12 : 24}
                 md={viewMode === "grid" ? 8 : 24}
-                key={locationItem.locationCode}
+                key={locationItem.id}
               >
                 {renderLocationCard(locationItem)}
               </Col>
@@ -237,7 +219,7 @@ export const LocationList = () => {
 
           <Col xs={24} lg={16}>
             <div className="location-page__toolbar">
-              <h2>Tong so dia diem: {locationTotal}</h2>
+              <h2>Tong so dia diem: {total}</h2>
 
               <div className="location-page__actions">
                 {isSmall && (

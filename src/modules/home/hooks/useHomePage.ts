@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
 import type { RegionKey } from "../types";
+import { getfeaturedLocations, getNewLocations } from "../api/home.api";
 import { useHomeData } from "./useHomeData";
 
 export const useHomePage = () => {
@@ -16,6 +18,43 @@ export const useHomePage = () => {
       ),
     [homeDataQuery.data?.regions, selectedRegion],
   );
+
+  const {
+    data: featuredLocations,
+    isLoading: isFeaturedLocationsLoading,
+    isError: isFeaturedLocationsError,
+  } = useQuery({
+    queryKey: ["home-featuredLocations"],
+    queryFn: () => getfeaturedLocations(),
+  });
+
+  const {
+    data: newLocations,
+    isLoading: isNewLocationsLoading,
+    isError: isNewLocationsError,
+  } = useQuery({
+    queryKey: ["home-newLocations"],
+    queryFn: () => getNewLocations(),
+  });
+
+  const data = useMemo(
+    () =>
+      homeDataQuery.data
+        ? {
+            ...homeDataQuery.data,
+            featuredLocations,
+            newLocations,
+          }
+        : undefined,
+    [featuredLocations, homeDataQuery.data, newLocations],
+  );
+
+  const isLoading =
+    homeDataQuery.isLoading ||
+    isFeaturedLocationsLoading ||
+    isNewLocationsLoading;
+  const isError =
+    homeDataQuery.isError || isFeaturedLocationsError || isNewLocationsError;
 
   const handleKeywordNavigate = (value: string) => {
     const keyword = value.trim();
@@ -32,26 +71,26 @@ export const useHomePage = () => {
     handleKeywordNavigate(value);
   };
 
-  const handleViewDetail = (code: string) => {
-    navigate(`${ROUTER_PATH.LOCATIONS}/${code}`);
+  const handleViewDetail = (id: string | number) => {
+    navigate(`${ROUTER_PATH.LOCATIONS}/${id}`);
   };
 
   const handleRegionClick = (region: RegionKey) => {
     navigate(`${ROUTER_PATH.LOCATIONS}?region=${region}`);
   };
 
-  const handleViewAll = () => {
-    navigate(ROUTER_PATH.LOCATIONS);
+  const handleViewHighestRating = () => {
+    navigate(`${ROUTER_PATH.LOCATIONS}?sortBy=rating&sortOrder=DESC`);
   };
 
   const handleViewNewest = () => {
-    navigate(`${ROUTER_PATH.LOCATIONS}?sort=newest`);
+    navigate(`${ROUTER_PATH.LOCATIONS}?sortBy=createdAt&sortOrder=DESC`);
   };
 
   return {
-    data: homeDataQuery.data,
-    isLoading: homeDataQuery.isLoading,
-    isError: homeDataQuery.isError,
+    data,
+    isLoading,
+    isError,
     selectedRegion,
     currentRegion,
     setSelectedRegion,
@@ -59,7 +98,7 @@ export const useHomePage = () => {
     handleKeywordNavigate,
     handleViewDetail,
     handleRegionClick,
-    handleViewAll,
+    handleViewHighestRating,
     handleViewNewest,
   };
 };

@@ -8,3 +8,4 @@ export { FormSearch } from "./FormSearch/formSearch";
 export { FormTextArea } from "./FormTextArea/formTextArea";
 export { LocationCard } from "./LocationCard";
 export { TopBar } from "./TopBar/TopBar";
+export { ScrollToTop } from "./ScrollToTop";

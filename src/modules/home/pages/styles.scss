@@ -12,9 +12,9 @@
 }
 
 .home-popular-place {
-  width: 312px;
+  width: 270px;
   height: 100%;
-  flex: 0 0 312px;
+  flex: 0 0 270px;
   overflow: hidden;
   border-radius: 8px;
   scroll-snap-align: start;
@@ -80,10 +80,22 @@
   }
 
   &__skeleton {
+    display: block !important;
     width: 100% !important;
     height: 282px !important;
-    flex: 0 0 312px;
+    flex: 0 0 270px;
     border-radius: 8px;
+
+    &.ant-skeleton.ant-skeleton-element {
+      display: block;
+      width: 100%;
+    }
+
+    .ant-skeleton-node {
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: inherit;
+    }
   }
 }
 
@@ -127,9 +139,21 @@
   }
 
   &__skeleton {
+    display: block !important;
     width: 100% !important;
     height: 350px !important;
     border-radius: 8px;
+
+    &.ant-skeleton.ant-skeleton-element {
+      display: block;
+      width: 100%;
+    }
+
+    .ant-skeleton-node {
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: inherit;
+    }
   }
 }
 
@@ -161,7 +185,11 @@
     position: absolute;
     inset: 0;
     content: "";
-    background: linear-gradient(180deg, rgba(0, 41, 58, 0.1), rgba(0, 41, 58, 0.78));
+    background: linear-gradient(
+      180deg,
+      rgba(0, 41, 58, 0.1),
+      rgba(0, 41, 58, 0.78)
+    );
   }
 
   &:hover::before {
@@ -170,19 +198,31 @@
 
   &--north::before {
     background:
-      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.24), transparent 24%),
+      radial-gradient(
+        circle at 78% 18%,
+        rgba(255, 255, 255, 0.24),
+        transparent 24%
+      ),
       linear-gradient(135deg, #00293a 0%, #147ba7 100%);
   }
 
   &--central::before {
     background:
-      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.24), transparent 24%),
+      radial-gradient(
+        circle at 78% 18%,
+        rgba(255, 255, 255, 0.24),
+        transparent 24%
+      ),
       linear-gradient(135deg, #004b5f 0%, #2f9e8f 100%);
   }
 
   &--south::before {
     background:
-      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.24), transparent 24%),
+      radial-gradient(
+        circle at 78% 18%,
+        rgba(255, 255, 255, 0.24),
+        transparent 24%
+      ),
       linear-gradient(135deg, #073047 0%, #8a6a22 100%);
   }
 
@@ -214,9 +254,21 @@
   }
 
   &__skeleton {
+    display: block !important;
     width: 100% !important;
     height: 156px !important;
     border-radius: 8px;
+
+    &.ant-skeleton.ant-skeleton-element {
+      display: block;
+      width: 100%;
+    }
+
+    .ant-skeleton-node {
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: inherit;
+    }
   }
 }
 
@@ -245,11 +297,11 @@
   }
 
   .home-popular-place {
-    width: 280px;
-    flex-basis: 280px;
+    width: 260px;
+    flex-basis: 260px;
 
     &__skeleton {
-      flex-basis: 280px;
+      flex-basis: 260px;
     }
   }
 
@@ -262,15 +314,15 @@
 
 @media (max-width: 520px) {
   .home-popular-place {
-    width: 252px;
-    flex-basis: 252px;
+    width: 248px;
+    flex-basis: 248px;
 
     .ant-card-body {
       min-height: 142px;
     }
 
     &__skeleton {
-      flex-basis: 252px;
+      flex-basis: 248px;
     }
   }
 }

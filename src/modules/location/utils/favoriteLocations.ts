@@ -2,10 +2,9 @@ const FAVORITE_LOCATIONS_STORAGE_KEY = "fe-datn:favorites:locations";
 const FAVORITE_LOCATIONS_EVENT = "favorite-locations-changed";
 
 export interface FavoriteLocationSnapshot {
-  locationCode: string;
+  id: string | number;
   typeName: string;
   name: string;
-  description?: string;
   address?: string;
   rate?: number;
   price?: number;
@@ -41,9 +40,10 @@ const normalizeFavoriteLocations = (
   const uniqueMap = new Map<string, FavoriteLocationSnapshot>();
 
   items.forEach((item) => {
-    const existing = uniqueMap.get(item.locationCode);
+    const itemId = String(item.id);
+    const existing = uniqueMap.get(itemId);
     if (!existing || item.savedAt >= existing.savedAt) {
-      uniqueMap.set(item.locationCode, item);
+      uniqueMap.set(itemId, item);
     }
   });
 
@@ -70,7 +70,7 @@ export const readFavoriteLocations = (): FavoriteLocationSnapshot[] => {
     }
 
     return normalizeFavoriteLocations(
-      parsedValue.filter((item) => Boolean(item?.locationCode)),
+      parsedValue.filter((item) => Boolean(item?.id)),
     );
   } catch {
     return [];
@@ -90,20 +90,20 @@ const writeFavoriteLocations = (items: FavoriteLocationSnapshot[]) => {
   dispatchFavoritesChanged();
 };
 
-export const isFavoriteLocation = (locationCode: string) =>
-  readFavoriteLocations().some((item) => item.locationCode === locationCode);
+export const isFavoriteLocation = (id: string | number) =>
+  readFavoriteLocations().some((item) => String(item.id) === String(id));
 
-export const removeFavoriteLocation = (locationCode: string) => {
+export const removeFavoriteLocation = (id: string | number) => {
   const currentItems = readFavoriteLocations();
   writeFavoriteLocations(
-    currentItems.filter((item) => item.locationCode !== locationCode),
+    currentItems.filter((item) => String(item.id) !== String(id)),
   );
 };
 
 export const saveFavoriteLocation = (location: FavoriteLocationPayload) => {
   const currentItems = readFavoriteLocations();
   const filteredItems = currentItems.filter(
-    (item) => item.locationCode !== location.locationCode,
+    (item) => String(item.id) !== String(location.id),
   );
 
   writeFavoriteLocations([
@@ -116,8 +116,8 @@ export const saveFavoriteLocation = (location: FavoriteLocationPayload) => {
 };
 
 export const toggleFavoriteLocation = (location: FavoriteLocationPayload) => {
-  if (isFavoriteLocation(location.locationCode)) {
-    removeFavoriteLocation(location.locationCode);
+  if (isFavoriteLocation(location.id)) {
+    removeFavoriteLocation(location.id);
     return;
   }
 

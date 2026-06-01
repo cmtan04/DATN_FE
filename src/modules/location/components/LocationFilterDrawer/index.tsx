@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   Divider,
   Drawer,
   Form,
@@ -12,25 +11,27 @@ import {
 } from "antd";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAllLocationType } from "../../api/location.api";
-import { LocationEndpoint } from "../../api/location.endpoints";
-import type { ProfileLocationFilter } from "../../types";
+import {
+  getAllLocationType,
+  type LocationQueryFilter,
+} from "../../api/location.api";
+import { LOCATION_QUERY_KEYS } from "../../constants/queryKeys";
 import "./style.scss";
 
 interface LocationFilterDrawerProps {
   open: boolean;
   onClose: () => void;
-  initialFilter: ProfileLocationFilter;
-  onApply: (filter: ProfileLocationFilter) => void;
+  initialFilter: LocationQueryFilter;
+  onApply: (filter: LocationQueryFilter) => void;
 }
 
 const SORT_OPTIONS = [
-  { label: "Moi nhat", value: "createdAt-DESC" },
-  { label: "Gia: Thap den Cao", value: "locationPrice-ASC" },
-  { label: "Gia: Cao den Thap", value: "locationPrice-DESC" },
-  { label: "Dien tich: Nho den Lon", value: "locationArea-ASC" },
-  { label: "Dien tich: Lon den Nho", value: "locationArea-DESC" },
-  { label: "Danh gia cao nhat", value: "locationRate-DESC" },
+  { label: "Mới nhất", value: "createdAt-DESC" },
+  { label: "Giá: Thấp đến Cao", value: "price-ASC" },
+  { label: "Giá: Cao đến Thấp", value: "price-DESC" },
+  { label: "Diện tích: Nhỏ đến Lớn", value: "area-ASC" },
+  { label: "Diện tích: Lớn đến Nhỏ", value: "area-DESC" },
+  { label: "Đánh giá tốt nhất", value: "rating-DESC" },
 ];
 
 const { useBreakpoint } = Grid;
@@ -46,19 +47,19 @@ export const LocationFilterDrawer = ({
   const isDesktop = screens.lg;
 
   const { data: locationTypes } = useQuery({
-    queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
+    queryKey: LOCATION_QUERY_KEYS.types,
     queryFn: getAllLocationType,
   });
 
   useEffect(() => {
     const sortValue = initialFilter.sortBy
       ? `${initialFilter.sortBy}-${initialFilter.sortOrder || "DESC"}`
-      : undefined;
+      : "createdAt-DESC";
 
     form.setFieldsValue({
-      locationType: initialFilter.locationType
-        ? initialFilter.locationType.split(",")
-        : [],
+      keyword: initialFilter.searchValue,
+      addressRegion: initialFilter.addressRegion,
+      locationTypeId: initialFilter.locationTypeId ?? 0,
       priceRange: [
         initialFilter.minPrice ?? 0,
         initialFilter.maxPrice ?? 20000000,
@@ -68,9 +69,8 @@ export const LocationFilterDrawer = ({
     });
   }, [form, initialFilter]);
 
-  const getFilterFromForm = (): ProfileLocationFilter => {
+  const getFilterFromForm = (): LocationQueryFilter => {
     const values = form.getFieldsValue();
-    const typeArr: string[] = values.locationType ?? [];
     let sortBy: string | undefined;
     let sortOrder: "ASC" | "DESC" | undefined;
 
@@ -81,7 +81,13 @@ export const LocationFilterDrawer = ({
     }
 
     return {
-      locationType: typeArr.length > 0 ? typeArr.join(",") : undefined,
+      searchValue: values.keyword?.trim() || undefined,
+      addressRegion: values.addressRegion,
+      locationTypeId:
+        values.locationTypeId === 0 ? undefined : values.locationTypeId,
+      amenityKeywords: values.quickKeywords?.length
+        ? values.quickKeywords
+        : undefined,
       minPrice: values.priceRange?.[0] > 0 ? values.priceRange[0] : undefined,
       maxPrice:
         values.priceRange?.[1] < 20000000 ? values.priceRange[1] : undefined,
@@ -115,27 +121,26 @@ export const LocationFilterDrawer = ({
   const formContent = (
     <Form layout="vertical" form={form} onValuesChange={handleValuesChange}>
       <div className="location-filter__section">
-        <Typography.Title level={5}>Sap xep theo</Typography.Title>
+        <Typography.Title level={5}>Sắp xếp theo</Typography.Title>
         <Form.Item name="sort" noStyle>
-          <Select
-            allowClear
-            placeholder="Chon kieu sap xep"
-            options={SORT_OPTIONS}
-          />
+          <Select placeholder="Chon kieu sap xep" options={SORT_OPTIONS} />
         </Form.Item>
       </div>
 
       <Divider />
 
-      <Form.Item label="Loai hinh cho o" name="locationType">
-        <Checkbox.Group className="location-filter__checkboxes">
-          {locationTypes?.map((type) => (
-            <Checkbox key={type.typeCode} value={type.typeCode}>
-              {type.typeName}
-            </Checkbox>
-          ))}
-        </Checkbox.Group>
-      </Form.Item>
+      <div className="location-filter__section">
+        <Typography.Title level={5}>Loại hình chỗ ở</Typography.Title>
+        <Form.Item name="locationTypeId" noStyle>
+          <Select
+            placeholder="Chon loai hinh"
+            options={locationTypes?.map((type) => ({
+              label: type.name,
+              value: type.id,
+            }))}
+          />
+        </Form.Item>
+      </div>
 
       <Divider />
 

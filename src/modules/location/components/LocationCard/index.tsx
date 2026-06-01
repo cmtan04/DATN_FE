@@ -1,6 +1,5 @@
 import {
   EnvironmentOutlined,
-  FileTextOutlined,
   HeartFilled,
   HeartOutlined,
   HomeOutlined,
@@ -10,39 +9,47 @@ import {
 } from "@ant-design/icons";
 import { Tooltip } from "antd";
 import { useState } from "react";
+import type { LocationDto } from "../../types";
 import {
   toggleFavoriteLocation,
   type FavoriteLocationPayload,
 } from "../../utils/favoriteLocations";
+import { resolveMediaUrl } from "../../utils/media";
 import "./style.scss";
 
 interface LocationCardProps {
-  code: string;
-  typeName: string;
-  name: string;
-  description?: string;
-  address?: string;
-  rate?: number;
-  price?: number;
-  priceUnit?: string;
-  image?: string;
+  location: LocationDto;
   isFavourite: boolean;
-  onClick?: (code: string) => void;
+  onClick?: (id: string | number) => void;
 }
 
+const DEFAULT_ADDRESS = "Chua cap nhat dia chi";
+const DEFAULT_TYPE = "Chua phan loai";
+
+const formatLocationPrice = (price: number, priceUnit: string) =>
+  `${price.toLocaleString("vi-VN")} ${priceUnit}`;
+
+const formatLocationArea = (area: number) => `${area} m2`;
+
 export const LocationCard = (props: LocationCardProps) => {
+  const { location } = props;
   const [isFavourite, setIsFavourite] = useState(props.isFavourite);
+  const address = location.address?.fullAddress ?? DEFAULT_ADDRESS;
+  const typeName = location.type?.name ?? DEFAULT_TYPE;
+  const rate = location.averageRating ?? 0;
+  const image = location.thumbnailMedia?.url
+    ? resolveMediaUrl(location.thumbnailMedia.url)
+    : undefined;
 
   const favoritePayload: FavoriteLocationPayload = {
-    locationCode: props.code,
-    typeName: props.typeName,
-    name: props.name,
-    description: props.description,
-    address: props.address,
-    rate: props.rate,
-    price: props.price,
-    priceUnit: props.priceUnit,
-    image: props.image,
+    id: location.id,
+    typeName,
+    name: location.name,
+    address,
+    rate,
+    price: location.price,
+    priceUnit: location.priceUnit,
+    image,
   };
 
   const handleFavourite = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,22 +60,22 @@ export const LocationCard = (props: LocationCardProps) => {
 
   const handleShare = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const detailUrl = `${window.location.origin}/locations/${props.code}`;
+    const detailUrl = `${window.location.origin}/locations/${location.id}`;
     void navigator.clipboard?.writeText(detailUrl);
   };
 
   const handleOpenDetail = () => {
-    props.onClick?.(props.code);
+    props.onClick?.(location.id);
   };
 
   return (
-    <Tooltip title={props.address} placement="topRight">
+    <Tooltip title={address} placement="topRight">
       <article
         className="location-card-port"
         onClick={handleOpenDetail}
         role="button"
         tabIndex={0}
-        aria-label={`Xem chi tiet ${props.name}`}
+        aria-label={`Xem chi tiet ${location.name}`}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
@@ -77,7 +84,7 @@ export const LocationCard = (props: LocationCardProps) => {
         }}
       >
         <div className="location-card-port__image">
-          {props.image ? <img src={props.image} alt="" /> : <span />}
+          {image ? <img src={image} alt="" /> : <span />}
           <div className="location-card-port__actions">
             <button type="button" onClick={handleFavourite}>
               {isFavourite ? (
@@ -93,20 +100,20 @@ export const LocationCard = (props: LocationCardProps) => {
         </div>
         <div className="location-card-port__content">
           <h3>
-            <HomeOutlined /> {props.name}
+            <HomeOutlined /> {location.name}
           </h3>
           <div className="location-card-port__rate">
-            {props.rate ?? 0} <StarFilled />
+            {rate} <StarFilled />
+          </div>
+          <div className="location-card-port__meta">
+            <span>{formatLocationArea(location.area)}</span>
+            <span>{typeName}</span>
           </div>
           <p>
-            <FileTextOutlined /> {props.description}
-          </p>
-          <p>
-            <EnvironmentOutlined /> {props.address}
+            <EnvironmentOutlined /> {address}
           </p>
           <strong>
-            <TagOutlined /> {props.price?.toLocaleString()} VND/
-            {props.priceUnit || ""}
+            <TagOutlined /> {formatLocationPrice(location.price, location.priceUnit)}
           </strong>
         </div>
       </article>

@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App as AntdApp, ConfigProvider } from "antd";
-import { AuthProvider } from "./authContext";
+import { AuthProvider } from "./AuthProvider";
 import type { ReactNode } from "react";
 
 const queryClient = new QueryClient({

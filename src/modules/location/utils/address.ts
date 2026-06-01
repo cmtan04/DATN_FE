@@ -101,7 +101,8 @@ export const getRegionByCity = (city?: string): string => {
 export const createEmptyMapAddress = (
   lat = DEFAULT_LOCATION_LATITUDE,
   lng = DEFAULT_LOCATION_LONGITUDE,
-): MapAddressDto => ({
+): MapAddressDto =>
+  ({
   lat,
   long: lng,
   addressDetail: "",
@@ -112,7 +113,7 @@ export const createEmptyMapAddress = (
   addressLat: String(lat),
   addressLong: String(lng),
   addressRegion: "",
-});
+}) as MapAddressDto;
 
 export const buildAddressDetailFromNominatim = (
   data: NominatimResponseDto,
@@ -178,5 +179,5 @@ export const createMapAddressFromNominatim = (
     addressLat: String(lat),
     addressLong: String(lng),
     addressRegion: address.region || getRegionByCity(city),
-  };
+  } as MapAddressDto;
 };
