@@ -1,4 +1,4 @@
-import type { AuthResponse } from "../types";
+import type { AuthResponse } from "../../modules/auth/types";
 
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";

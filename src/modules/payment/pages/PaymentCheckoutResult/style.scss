@@ -1,0 +1,28 @@
+.payment-result {
+  width: min(880px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 56px;
+
+  &__card {
+    border-radius: 8px;
+  }
+
+  &__state {
+    min-height: 320px;
+    display: grid;
+    place-items: center;
+  }
+
+  &__details {
+    margin-top: 8px;
+  }
+
+  &__alert {
+    margin-top: 16px;
+  }
+
+  @media (max-width: 640px) {
+    width: min(100% - 20px, 880px);
+    padding-top: 24px;
+  }
+}

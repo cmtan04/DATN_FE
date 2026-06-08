@@ -1,5 +1,5 @@
 import { axiosClient } from "@shared/services/axiosClient";
-import { getAccessToken } from "./auth.storage";
+import { getAccessToken } from "../../../shared/services/auth.storage";
 import { AUTH_ENDPOINT } from "./auth.endpoints";
 import type { AuthResponse, LoginRequest, RegisterRequest } from "../types";
 

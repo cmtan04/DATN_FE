@@ -5,7 +5,7 @@ import { getAuthErrorMessage } from "@modules/auth/api/auth.errors";
 import {
   clearAuthToken,
   persistAuthToken,
-} from "@modules/auth/api/auth.storage";
+} from "@/shared/services/auth.storage";
 import { userApi } from "@modules/user/api/user.api";
 import type {
   AuthResponse,

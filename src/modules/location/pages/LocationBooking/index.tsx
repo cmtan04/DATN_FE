@@ -13,6 +13,7 @@ import {
   Descriptions,
   Form,
   Input,
+  InputNumber,
   Result,
   Space,
   Spin,
@@ -20,9 +21,11 @@ import {
 } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router/routes";
 import { useAuth } from "@app/providers/useAuth";
+import { getPaymentErrorMessage, useCreateCheckout } from "@modules/payment";
 import { useLocationDetail } from "../../hooks/useLocationDetail";
 import {
   formatLocationArea,
@@ -31,18 +34,32 @@ import {
 import "./style.scss";
 
 type LocationBookingFormValues = {
-  visitDate: Dayjs;
+  dateRange: [Dayjs, Dayjs];
+  guestCount: number;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
   note?: string;
 };
 
 const toAbsolutePath = (path: string) =>
   path.startsWith("/") ? path : `/${path}`;
 
+const getUserFullName = (
+  user: ReturnType<typeof useAuth>["user"],
+): string | undefined => user?.profile?.fullName ?? user?.fullName;
+
+const getUserPhoneNumber = (
+  user: ReturnType<typeof useAuth>["user"],
+): string | undefined => user?.profile?.phoneNumber ?? user?.phoneNumber;
+
 export const LocationBooking = () => {
   const { message } = AntdApp.useApp();
+  const [form] = Form.useForm<LocationBookingFormValues>();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const checkoutMutation = useCreateCheckout();
   const {
     data,
     errorMessage,
@@ -58,13 +75,43 @@ export const LocationBooking = () => {
   );
   const locationsPath = toAbsolutePath(ROUTER_PATH.LOCATIONS);
 
+  useEffect(() => {
+    form.setFieldsValue({
+      contactName: getUserFullName(user),
+      contactPhone: getUserPhoneNumber(user),
+      contactEmail: user?.email,
+      guestCount: 1,
+    });
+  }, [form, user]);
+
   const handleBackToDetail = () => {
     navigate(detailPath);
   };
 
-  const handleSubmit = () => {
-    message.success("Đã ghi nhận yêu cầu đặt phòng.");
-    navigate(detailPath);
+  const handleSubmit = async (values: LocationBookingFormValues) => {
+    if (!data?.id) {
+      message.error("Khong tim thay phong can thanh toan.");
+      return;
+    }
+
+    const [startDate, endDate] = values.dateRange;
+
+    try {
+      const checkout = await checkoutMutation.mutateAsync({
+        locationId: data.id,
+        startDate: startDate.format("YYYY-MM-DD"),
+        endDate: endDate.format("YYYY-MM-DD"),
+        guestCount: values.guestCount,
+        contactName: values.contactName.trim(),
+        contactPhone: values.contactPhone.trim(),
+        contactEmail: values.contactEmail.trim(),
+        note: values.note?.trim() || undefined,
+      });
+
+      window.location.assign(checkout.checkoutUrl);
+    } catch (error) {
+      message.error(getPaymentErrorMessage(error));
+    }
   };
 
   if (!id) {
@@ -137,9 +184,9 @@ export const LocationBooking = () => {
 
       <div className="location-booking__layout">
         <section className="location-booking__content">
-          <Typography.Title level={1}>Đặt phòng</Typography.Title>
+          <Typography.Title level={1}>Dat phong</Typography.Title>
           <Typography.Paragraph>
-            Gui lich mong muon de chu phong lien he xac nhan tinh trang phong.
+            Chon thoi gian luu tru va thong tin lien he de thanh toan qua payOS.
           </Typography.Paragraph>
 
           {isOwner ? (
@@ -153,34 +200,121 @@ export const LocationBooking = () => {
 
           <Card title="Thong tin dat phong" className="location-booking__card">
             <Form<LocationBookingFormValues>
+              form={form}
               layout="vertical"
               onFinish={handleSubmit}
-              disabled={isOwner}
+              disabled={isOwner || checkoutMutation.isPending}
             >
               <Form.Item
-                name="visitDate"
-                label="Ngay muon xem/nhan phong"
+                name="dateRange"
+                label="Thoi gian dat phong"
                 rules={[
                   {
                     required: true,
-                    message: "Vui long chon ngay muon xem/nhan phong.",
+                    message: "Vui long chon thoi gian dat phong.",
                   },
                 ]}
               >
-                <DatePicker
+                <DatePicker.RangePicker
                   className="location-booking__date-picker"
                   format="DD/MM/YYYY"
-                  placeholder="Chon ngay"
+                  placeholder={["Ngay bat dau", "Ngay ket thuc"]}
                   disabledDate={(current) =>
                     Boolean(current && current < dayjs().startOf("day"))
                   }
                 />
               </Form.Item>
 
-              <Form.Item name="note" label="Ghi chu">
+              <Form.Item
+                name="guestCount"
+                label="So luong khach"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui long nhap so luong khach.",
+                  },
+                ]}
+              >
+                <InputNumber
+                  className="location-booking__number"
+                  min={1}
+                  max={99}
+                  precision={0}
+                  placeholder="So khach"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="contactName"
+                label="Ho ten lien he"
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: "Vui long nhap ho ten lien he.",
+                  },
+                  {
+                    max: 255,
+                    message: "Ho ten lien he khong duoc vuot qua 255 ky tu.",
+                  },
+                ]}
+              >
+                <Input placeholder="Ho ten cua ban" />
+              </Form.Item>
+
+              <Form.Item
+                name="contactPhone"
+                label="So dien thoai"
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: "Vui long nhap so dien thoai.",
+                  },
+                  {
+                    max: 50,
+                    message: "So dien thoai khong duoc vuot qua 50 ky tu.",
+                  },
+                ]}
+              >
+                <Input placeholder="So dien thoai lien he" />
+              </Form.Item>
+
+              <Form.Item
+                name="contactEmail"
+                label="Email"
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: "Vui long nhap email lien he.",
+                  },
+                  {
+                    type: "email",
+                    message: "Email lien he khong hop le.",
+                  },
+                  {
+                    max: 255,
+                    message: "Email khong duoc vuot qua 255 ky tu.",
+                  },
+                ]}
+              >
+                <Input placeholder="Email lien he" />
+              </Form.Item>
+
+              <Form.Item
+                name="note"
+                label="Ghi chu"
+                rules={[
+                  {
+                    max: 2000,
+                    message: "Ghi chu khong duoc vuot qua 2000 ky tu.",
+                  },
+                ]}
+              >
                 <Input.TextArea
                   rows={5}
-                  maxLength={500}
+                  maxLength={2000}
                   showCount
                   placeholder="Ghi chu them ve thoi gian lien he hoac nhu cau cua ban"
                 />
@@ -188,8 +322,13 @@ export const LocationBooking = () => {
 
               <Space className="location-booking__actions">
                 <Button onClick={handleBackToDetail}>Huy</Button>
-                <Button type="primary" htmlType="submit" disabled={isOwner}>
-                  Gửi yêu cầu đặt phòng
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={isOwner}
+                  loading={checkoutMutation.isPending}
+                >
+                  Thanh toan qua payOS
                 </Button>
               </Space>
             </Form>
@@ -198,7 +337,11 @@ export const LocationBooking = () => {
 
         <aside className="location-booking__summary">
           <Card title="Phong dang dat" className="location-booking__card">
-            <Space direction="vertical" size={14} className="location-booking__room">
+            <Space
+              direction="vertical"
+              size={14}
+              className="location-booking__room"
+            >
               <Typography.Title level={2}>{data.name}</Typography.Title>
               <Typography.Text className="location-booking__price">
                 {formatLocationPrice(data.price, data.priceUnit)}
@@ -236,15 +379,15 @@ export const LocationBooking = () => {
             showIcon
             type="info"
             icon={<CalendarOutlined />}
-            message="Yeu cau nay chua tao don dat phong tren he thong."
-            description="Backend booking se duoc ket noi sau khi co endpoint chinh thuc."
+            message="Tong tien se duoc xac nhan o buoc thanh toan."
+            description="Gia hien tai chi la thong tin tham khao theo phong dang chon."
           />
 
           {user ? (
             <Card className="location-booking__card">
               <Space>
                 <UserOutlined />
-                <span>{user.fullName ?? user.email ?? "Tai khoan cua ban"}</span>
+                <span>{getUserFullName(user) ?? user.email}</span>
               </Space>
             </Card>
           ) : null}

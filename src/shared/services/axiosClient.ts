@@ -1,69 +1,145 @@
 import { ROUTER_PATH } from "@/app/router/routes";
-import axios, { type InternalAxiosRequestConfig } from "axios";
+import type { AuthResponse } from "@/modules/auth/types";
+import axios, {
+  AxiosError,
+  type InternalAxiosRequestConfig,
+} from "axios";
+import * as authStorage from "@/shared/services/auth.storage";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || "";
+const REFRESH_TOKEN_ENDPOINT = "/auth/refresh-token";
+
+type RetryableRequestConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean;
+};
+
+type PendingRequest = {
+  resolve: (accessToken: string) => void;
+  reject: (error: unknown) => void;
+};
 
 export const axiosClient = axios.create({
-  baseURL: baseURL,
+  baseURL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
-  },  
+  },
 });
+
+let isRefreshing = false;
+let pendingRequests: PendingRequest[] = [];
+
+const redirectToSignIn = () => {
+  authStorage.clearAuthToken();
+  window.location.href = ROUTER_PATH.SIGNIN;
+};
+
+const setAuthorizationHeader = (
+  config: InternalAxiosRequestConfig,
+  accessToken: string,
+) => {
+  config.headers.set("Authorization", `Bearer ${accessToken}`);
+};
+
+const flushPendingRequests = (error: unknown, accessToken?: string) => {
+  pendingRequests.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+      return;
+    }
+
+    if (accessToken) {
+      resolve(accessToken);
+    }
+  });
+
+  pendingRequests = [];
+};
+
+const refreshAccessToken = async (refreshToken: string) => {
+  const { data } = await axios.post<AuthResponse>(
+    `${baseURL}${REFRESH_TOKEN_ENDPOINT}`,
+    { refreshToken },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      timeout: 10000,
+    },
+  );
+
+  if (!data.accessToken) {
+    throw new Error("Refresh token response is missing accessToken.");
+  }
+
+  authStorage.persistAuthToken({
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken || refreshToken,
+  });
+
+  return data.accessToken;
+};
 
 axiosClient.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = authStorage.getAccessToken();
 
     if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+      setAuthorizationHeader(config, accessToken);
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error),
 );
 
 axiosClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      
-      const refreshToken = localStorage.getItem("refreshToken");
-      
-      if (refreshToken) {
-        // SỬA 1: Thêm baseURL vào đường dẫn
-        // SỬA 2: Đổi key thành refresh_token cho khớp Backend
-        return axios.post(`${baseURL}/auth/refresh-token`, { 
-            refreshToken: refreshToken 
-          })
-          .then(res => {
-            if (res.status === 200 || res.status === 201) {
-              // SỬA 3: Đổi key nhận về thành access_token
-              const newAccessToken = res.data.accessToken; 
-              
-              localStorage.setItem("accessToken", newAccessToken);
-              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-              return axiosClient(originalRequest);
-            }
-          })
-          .catch(refreshError => {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            // SỬA 4: Thêm dấu / để đưa về root domain
-            window.location.href = `${ROUTER_PATH.SIGNIN}`; 
-            return Promise.reject(refreshError);
-          });
-      } else {
-        localStorage.removeItem("accessToken");
-        window.location.href = `${ROUTER_PATH.SIGNIN}`;
-      }
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetryableRequestConfig | undefined;
+
+    if (
+      error.response?.status !== 401 ||
+      !originalRequest ||
+      originalRequest._retry
+    ) {
+      return Promise.reject(error);
     }
-    
-    return Promise.reject(error);
-  }
+
+    const refreshToken = authStorage.getRefreshToken();
+
+    if (!refreshToken) {
+      redirectToSignIn();
+      return Promise.reject(error);
+    }
+
+    originalRequest._retry = true;
+
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        pendingRequests.push({
+          resolve: (accessToken) => {
+            setAuthorizationHeader(originalRequest, accessToken);
+            resolve(axiosClient(originalRequest));
+          },
+          reject,
+        });
+      });
+    }
+
+    isRefreshing = true;
+
+    try {
+      const newAccessToken = await refreshAccessToken(refreshToken);
+      flushPendingRequests(null, newAccessToken);
+      setAuthorizationHeader(originalRequest, newAccessToken);
+      return axiosClient(originalRequest);
+    } catch (refreshError) {
+      flushPendingRequests(refreshError);
+      redirectToSignIn();
+      return Promise.reject(refreshError);
+    } finally {
+      isRefreshing = false;
+    }
+  },
 );

@@ -8,12 +8,12 @@ import {
   LocationList,
   LocationMap,
 } from "@modules/location";
-import { ProfilePage } from "@modules/user";
+import { PaymentCheckoutResult } from "@modules/payment";
+import { ProfilePage, UserBookingsPage } from "@modules/user";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ROUTER_NAME, ROUTER_PATH } from "./routes";
 
-const UserBookingsPlaceholder = () => <div>Lịch sử đặt phòng</div>;
-const UserFavoritesPlaceholder = () => <div>Danh sách phòng yêu thích</div>;
+const UserFavoritesPlaceholder = () => <div>Danh sach phong yeu thich</div>;
 
 export const WebRouter = () => (
   <Routes>
@@ -32,11 +32,15 @@ export const WebRouter = () => (
           path={ROUTER_NAME.LOCATION_BOOKING}
           element={<LocationBooking />}
         />
+        <Route
+          path={ROUTER_NAME.PAYMENT_CHECKOUT}
+          element={<PaymentCheckoutResult />}
+        />
         <Route path={ROUTER_NAME.PROFILE} element={<ProfilePage />} />
         <Route path={ROUTER_NAME.USER_PROFILE} element={<ProfilePage />} />
         <Route
           path={ROUTER_NAME.USER_BOOKINGS}
-          element={<UserBookingsPlaceholder />}
+          element={<UserBookingsPage />}
         />
         <Route
           path={ROUTER_NAME.USER_FAVORITES}
