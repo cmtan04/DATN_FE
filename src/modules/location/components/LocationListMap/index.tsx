@@ -6,7 +6,7 @@ import { useEffect, useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import type { LocationDto } from "../../types";
+import type { LocationListItem } from "../../types";
 import {
   DEFAULT_LOCATION_LATITUDE,
   DEFAULT_LOCATION_LONGITUDE,
@@ -23,7 +23,7 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 interface LocationListMapProps {
-  locations: LocationDto[];
+  locations: LocationListItem[];
   onOpenDetail: (id: string | number) => void;
 }
 

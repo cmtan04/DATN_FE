@@ -1,0 +1,62 @@
+@use "@/variables.scss" as *;
+
+.hotelHeader {
+  .tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: $font-display;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: $foreground;
+    margin: 0 0 10px;
+    line-height: 1.2;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    border-top: 1px solid $border;
+    .ratingBadge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      .rateStar {
+        font-size: 16px !important;
+        color: #d4a849 !important;
+      }
+      .score {
+        font-family: $font-body;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: $foreground;
+      }
+    }
+  }
+  .divider {
+    width: 1px;
+    height: 20px;
+    background: $border;
+  }
+  .locationText {
+    font-family: $font-body;
+    font-size: 0.88rem;
+    color: $muted-fg;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .actions {
+    margin-left: auto;
+    .heartRed {
+      color: #ff4d6d !important;
+    }
+  }
+}

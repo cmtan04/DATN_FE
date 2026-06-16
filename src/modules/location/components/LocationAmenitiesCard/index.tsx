@@ -1,12 +1,12 @@
-import { Card, Empty, Tag, Typography } from "antd";
-import type { LocationServiceDto } from "../../types";
+import {  Empty, Tag, Typography } from "antd";
+import type { LocationServiceItem } from "../../types";
 import { formatLocationPrice } from "../../utils/locationDetailFormatters";
 
 interface LocationAmenitiesCardProps {
-  services: LocationServiceDto[];
+  services: LocationServiceItem[];
 }
 
-const getServicePriceLabel = (service: LocationServiceDto) => {
+const getServicePriceLabel = (service: LocationServiceItem) => {
   const price = Number(service.price ?? 0);
 
   if (service.isFree || !price) {
@@ -19,11 +19,14 @@ const getServicePriceLabel = (service: LocationServiceDto) => {
 export const LocationAmenitiesCard = ({
   services,
 }: LocationAmenitiesCardProps) => (
-  <Card title="Tien ich" className="location-detail__card">
+  <>
     {services.length ? (
       <div className="location-detail__amenities-grid">
-        {services.map((service) => (
-          <div className="location-detail__amenity-card" key={service.id}>
+        {services.map((service, index) => (
+          <div
+            className="location-detail__amenity-card"
+            key={`${service.name}-${service.priceUnit ?? "free"}-${index}`}
+          >
             <Typography.Text
               className="location-detail__amenity-name"
               strong
@@ -45,5 +48,5 @@ export const LocationAmenitiesCard = ({
         description="Chua co tien ich"
       />
     )}
-  </Card>
+  </>
 );

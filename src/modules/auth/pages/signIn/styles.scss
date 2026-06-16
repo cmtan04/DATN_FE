@@ -41,6 +41,10 @@
     border-radius: 6px;
   }
 
+  &__steps {
+    margin: 0 0 24px;
+  }
+
   &__form-row {
     display: flex;
     align-items: center;
@@ -51,6 +55,14 @@
 
   &__link-button {
     height: auto;
+    padding: 0;
+    color: $secondary_color;
+  }
+
+  &__resend-button {
+    display: flex;
+    height: auto;
+    margin: 16px auto 0;
     padding: 0;
     color: $secondary_color;
   }

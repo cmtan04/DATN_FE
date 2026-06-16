@@ -1,0 +1,39 @@
+@use "@/variables" as *;
+
+.searchBar {
+  position: sticky;
+  top: 64px;
+  z-index: 40;
+  background: #fff;
+  border-bottom: 1px solid $border;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 12px 24px;
+
+  .inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  // Đã bỏ :global, giờ css này sẽ ăn trực tiếp vào các class của Ant Design
+  .ant-input-affix-wrapper,
+  .ant-picker,
+  .ant-select-selector {
+    border-radius: $radius-md !important;
+    background: #f5f3ef !important;
+    border-color: transparent !important;
+
+    &:hover {
+      border-color: $primary !important;
+    }
+  }
+  .queryInput {
+    flex: 1;
+    min-width: 180px;
+  }
+}

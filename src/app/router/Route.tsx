@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { WebLayout } from "@app/layouts";
-import { SignIn, SignUp } from "@modules/auth";
+import { ForgotPassword, SignIn, SignUp } from "@modules/auth";
 import { HomePage } from "@modules/home";
 import {
   LocationBooking,
@@ -20,6 +20,10 @@ export const WebRouter = () => (
     <Route path="/" element={<Navigate to={ROUTER_PATH.HOME} replace />} />
     <Route path={ROUTER_NAME.SIGNIN} element={<SignIn />} />
     <Route path={ROUTER_NAME.SIGNUP} element={<SignUp />} />
+    <Route
+      path={ROUTER_NAME.FORGOT_PASSWORD}
+      element={<ForgotPassword />}
+    />
 
     <Route element={<WebLayout />}>
       <Route path={ROUTER_NAME.HOME} element={<HomePage />} />

@@ -1,0 +1,141 @@
+@use "@/variables" as *;
+
+.section {
+  padding: 80px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+
+  .left {
+    .eyebrow {
+      font-family: $font-body;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: $accent;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-family: $font-display;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      color: $foreground;
+      margin: 0;
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 220px);
+  gap: 16px;
+
+  @media (max-width: #{$bp-md}) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 200px);
+  }
+
+  @media (max-width: #{$bp-sm}) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+
+    .bigCard {
+      height: 280px;
+    }
+  }
+}
+
+.bigCard {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.destCard {
+  position: relative;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  cursor: pointer;
+  background: $muted;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.06);
+  }
+
+  .gradientOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(11, 61, 107, 0.85) 0%,
+      transparent 60%
+    );
+  }
+
+  .cardContent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 20px 24px;
+
+    .count {
+      font-family: $font-body;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 4px;
+    }
+
+    h3 {
+      font-family: $font-display;
+      color: #fff;
+      margin: 0 0 2px;
+      line-height: 1;
+    }
+
+    .country {
+      font-family: $font-body;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  &.bigCard .cardContent h3 {
+    font-size: 2rem;
+  }
+
+  .arrowBtn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &:hover .arrowBtn {
+    opacity: 1;
+  }
+}

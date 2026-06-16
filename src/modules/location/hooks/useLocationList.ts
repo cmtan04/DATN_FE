@@ -1,5 +1,5 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router/routes";
 import {
@@ -9,46 +9,28 @@ import {
 import { LOCATION_QUERY_KEYS } from "../constants/queryKeys";
 import { buildURLFromFilter, parseFilterFromURL } from "../utils/filter";
 
-const DEFAULT_SEARCH_SUGGESTIONS = [
-  "Ha Noi",
-  "Phu Quoc",
-  "Hoi An",
-  "Quan Dong Da",
-  "Duong Giai Phong",
-];
-
-const REGION_SUGGESTIONS: Record<string, string[]> = {
-  north: ["Ha Noi", "Hai Phong", "Quang Ninh"],
-  central: ["Da Nang", "Hoi An", "Hue"],
-  south: ["Ho Chi Minh", "Phu Quoc", "Can Tho"],
-};
-
 export const useLocationList = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  
   const navigate = useNavigate();
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const hasHandledState = useRef(false);
 
   useEffect(() => {
     if (hasHandledState.current) return;
     const routeState = location.state as {
-      rent?: string;
       location?: string;
+      guestCount?: string;
     } | null;
-    if (!routeState?.rent && !routeState?.location) return;
+    if ( !routeState?.location && !routeState?.guestCount) return;
 
     hasHandledState.current = true;
     const params = new URLSearchParams(searchParams);
-
-    if (routeState.rent) {
-      const locationTypeId = Number(routeState.rent);
-      if (!isNaN(locationTypeId)) {
-        params.set("locationTypeId", String(locationTypeId));
-      }
-    }
     if (routeState.location) {
       params.set("region", routeState.location);
+    }
+    if (routeState.guestCount) {
+      params.set("guestCount", routeState.guestCount);
     }
 
     navigate(`${ROUTER_PATH.LOCATIONS}?${params.toString()}`, {
@@ -58,11 +40,6 @@ export const useLocationList = () => {
   }, [location.state, navigate, searchParams]);
 
   const filter = parseFilterFromURL(searchParams);
-  const scopedRegion = searchParams.get("region");
-  const searchSuggestions =
-    location.pathname.startsWith(ROUTER_PATH.LOCATIONS) && scopedRegion
-      ? REGION_SUGGESTIONS[scopedRegion] || []
-      : DEFAULT_SEARCH_SUGGESTIONS;
 
   const {
     data: locationData,
@@ -106,12 +83,13 @@ export const useLocationList = () => {
   );
 
   const handleSearch = useCallback(
-    (keyword: string) => {
+    (keyword: string, guestCount?: number) => {
       const trimmed = keyword.trim();
       if (!trimmed) return;
       updateFilter({
         ...filter,
         searchValue: trimmed,
+        guestCount,
       });
     },
     [filter, updateFilter],
@@ -122,9 +100,10 @@ export const useLocationList = () => {
       updateFilter({
         ...sidebarFilter,
         searchValue: filter.searchValue,
+        guestCount: filter.guestCount,
       });
     },
-    [filter.searchValue, updateFilter],
+    [filter.guestCount, filter.searchValue, updateFilter],
   );
 
   const openLocationDetail = useCallback(
@@ -146,13 +125,10 @@ export const useLocationList = () => {
     isError,
     error,
     refetch,
-    searchSuggestions,
     filter,
     updateFilter,
     handleFilterApply,
     handleSearch,
     openLocationDetail,
-    isFilterOpen,
-    setIsFilterOpen,
   };
 };

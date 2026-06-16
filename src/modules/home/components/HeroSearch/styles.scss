@@ -1,0 +1,137 @@
+@use "@/variables" as *;
+
+.hero {
+  position: relative;
+  height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 64px;
+  overflow: hidden;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(11, 61, 107, 0.72) 0%,
+      rgba(11, 61, 107, 0.45) 50%,
+      rgba(8, 20, 40, 0.75) 100%
+    );
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  margin-bottom: 24px;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $accent;
+    animation: pulse 2s infinite;
+  }
+
+  span {
+    font-family: $font-body;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.05em;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.title {
+  font-family: $font-display !important;
+  color: #fff !important;
+  font-size: clamp(2.2rem, 5vw, 3.8rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  margin-bottom: 16px !important;
+
+  .accent {
+    color: $accent;
+  }
+}
+
+.subtitle {
+  font-family: $font-body;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.05rem;
+  max-width: 480px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.quickFilters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.filterTag {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: $font-body;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-6px);
+  }
+}

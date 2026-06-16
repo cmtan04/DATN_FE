@@ -1,0 +1,24 @@
+@use "@/variables.scss" as *;
+.detail_tag {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+
+  .ant-tag {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 4px 8px;
+    border: 1px solid rgba($primary, 0.14);
+    border-radius: 999px;
+    background: rgba($secondary, 0.16);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba($primary, 0.1);
+    color: $primary;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+}

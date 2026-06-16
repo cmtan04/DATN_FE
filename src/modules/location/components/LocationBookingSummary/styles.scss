@@ -1,0 +1,158 @@
+@use "@/variables" as *;
+
+.widget {
+  position: sticky;
+  top: 84px;
+  overflow: hidden;
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  background: $card;
+  box-shadow: 0 8px 32px rgba(11, 61, 107, 0.1);
+
+  .ant-card-body {
+    padding: 0;
+  }
+}
+
+.widgetBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.widgetPrice {
+  .main {
+    color: $primary;
+    font-family: $font-display;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .per {
+    color: $muted-fg;
+    font-family: $font-body;
+    font-size: 0.85rem;
+  }
+
+  .original {
+    margin-left: 8px;
+    color: $muted-fg;
+    font-family: $font-body;
+    font-size: 0.82rem;
+    text-decoration: line-through;
+  }
+}
+
+.widgetField {
+  label {
+    display: block;
+    margin-bottom: 6px;
+    color: $muted-fg;
+    font-family: $font-body;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ant-picker,
+  .ant-input-number {
+    width: 100%;
+    border-color: transparent !important;
+    border-radius: $radius-md !important;
+    background: #f5f3ef !important;
+
+    &:hover {
+      border-color: $primary !important;
+    }
+  }
+}
+
+.widgetSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid $border;
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+
+    span {
+      color: $muted-fg;
+      font-family: $font-body;
+      font-size: 0.85rem;
+    }
+
+    strong {
+      color: $foreground;
+      font-family: $font-body;
+      font-size: 0.85rem;
+      text-align: right;
+    }
+  }
+
+  .total {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid $border;
+
+    span {
+      color: $foreground;
+      font-family: $font-body;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    strong {
+      color: $primary;
+      font-family: $font-display;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: right;
+    }
+  }
+}
+
+.widgetNote {
+  margin: 0;
+  color: $muted-fg;
+  font-family: $font-body;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.cancelNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  border-radius: $radius-md;
+  background: $accent-light;
+
+  .icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: $accent;
+    font-size: 14px;
+  }
+
+  p {
+    margin: 0;
+    color: $foreground;
+    font-family: $font-body;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: $bp-lg) {
+  .widget {
+    position: static;
+  }
+}

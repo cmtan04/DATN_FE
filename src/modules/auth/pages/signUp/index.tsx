@@ -1,17 +1,31 @@
-import { Alert, App as AntdApp, Button, Checkbox, Form, Typography } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Alert,
+  App as AntdApp,
+  Button,
+  Checkbox,
+  Form,
+  Typography,
+} from "antd";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
 import { useAuth } from "@app/providers/useAuth";
 import { FormInput } from "@shared/components/FormInput/formInput";
 import { FormPassword } from "@shared/components/FormPassword/formPassword";
 import { AuthLayout } from "../../components/AuthLayout";
-import type { SignUpFormValues } from "../../types";
+import type { SignInLocationState, SignUpFormValues } from "../../types";
 
 export const SignUp = () => {
   const [form] = Form.useForm<SignUpFormValues>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { message } = AntdApp.useApp();
   const { authError, isSigningUp, signUp } = useAuth();
+  const locationState = location.state as SignInLocationState | null;
+  const redirectPath = locationState?.from?.pathname
+    ? `${locationState.from.pathname}${locationState.from.search ?? ""}${
+        locationState.from.hash ?? ""
+      }`
+    : ROUTER_PATH.HOME;
 
   const handleSubmit = async (values: SignUpFormValues) => {
     try {
@@ -22,24 +36,18 @@ export const SignUp = () => {
         password: values.password,
       });
 
-      message.success(response.message || "Đăng kí tài khoản thành công.");
-      navigate(ROUTER_PATH.HOME);
+      message.success(response.message || "Đăng ký tài khoản thành công.");
+      navigate(redirectPath, { replace: true });
     } catch {
-      // AuthProvider đã normalize lỗi vào authError để Alert hiển thị nhất quán.
+      // AuthProvider already normalizes auth errors for a consistent Alert.
     }
   };
 
   return (
-    <AuthLayout
-      visualTitle="Bắt đầu với tài khoản mới"
-      visualDescription="Lưu lựa chọn, quản lý hồ sơ và theo dõi các địa điểm quan trọng."
-    >
+    <AuthLayout>
       <Typography.Title level={1} className="auth-page__title">
-        Đăng kí
+        Đăng ký
       </Typography.Title>
-      <Typography.Paragraph className="auth-page__subtitle">
-        Tạo tài khoản để lưu địa điểm yêu thích và quản lý thông tin cá nhân.
-      </Typography.Paragraph>
 
       {authError ? (
         <Alert
@@ -168,12 +176,15 @@ export const SignUp = () => {
           disabled={isSigningUp}
           className="auth-page__submit"
         >
-          Đăng kí
+          Đăng ký
         </Button>
       </Form>
 
       <Typography.Paragraph className="auth-page__switch">
-        Đã có tài khoản? <Link to={ROUTER_PATH.SIGNIN}>Đăng nhập</Link>
+        Đã có tài khoản?{" "}
+        <Link to={ROUTER_PATH.SIGNIN} state={locationState}>
+          Đăng nhập
+        </Link>
       </Typography.Paragraph>
     </AuthLayout>
   );

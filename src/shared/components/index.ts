@@ -6,6 +6,10 @@ export { FormNumber as FormInputNumber } from "./FormInputNumber/formInputNumer"
 export { FormPassword } from "./FormPassword/formPassword";
 export { FormSearch } from "./FormSearch/formSearch";
 export { FormTextArea } from "./FormTextArea/formTextArea";
-export { LocationCard } from "./LocationCard";
+export {
+  LocationSearchCard,
+  type LocationSearchPayload,
+} from "./LocationSearchCard";
 export { TopBar } from "./TopBar/TopBar";
 export { ScrollToTop } from "./ScrollToTop";
+export { NavBar } from "./NavBar";

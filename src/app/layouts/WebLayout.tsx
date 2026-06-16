@@ -1,14 +1,16 @@
 import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
-import { Footer, TopBar } from "@shared/components";
+import { LoginRequiredModal } from "@modules/auth/components/LoginRequiredModal";
+import { Footer, NavBar } from "@shared/components";
 import "./webLayout.scss";
 
 export const WebLayout = () => (
   <Layout className="web-layout">
-    <TopBar />
+    <NavBar />
     <Layout.Content className="web-layout__content">
       <Outlet />
     </Layout.Content>
     <Footer />
+    <LoginRequiredModal />
   </Layout>
 );

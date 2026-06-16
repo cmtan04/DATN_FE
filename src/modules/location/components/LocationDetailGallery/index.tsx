@@ -6,19 +6,18 @@ import {
 import { Button, Empty, Modal, Tag } from "antd";
 import type { SyntheticEvent } from "react";
 import { useMemo, useState } from "react";
-import type { LocationMediaDto } from "../../types";
-import { resolveMediaUrl } from "../../utils/media";
+import type { LocationMedia } from "../../types";
 
 interface LocationDetailGalleryProps {
-  galleryItems: LocationMediaDto[];
+  galleryItems: LocationMedia[];
   locationName: string;
 }
 
 type MediaOrientation = "landscape" | "portrait";
 
-const MAX_VISIBLE_GALLERY_ITEMS = 4;
+const MAX_VISIBLE_GALLERY_ITEMS = 5;
 
-const getMediaLabel = (type: LocationMediaDto["type"]) => {
+const getMediaLabel = (type: LocationMedia["type"]) => {
   if (type === "video") return "Video";
   if (type === "image360") return "Anh 360";
 
@@ -29,8 +28,9 @@ const getPreviewGridModifier = (mediaCount: number) => {
   if (mediaCount <= 1) return "single";
   if (mediaCount === 2) return "pair";
   if (mediaCount === 3) return "triple";
+  if (mediaCount === 4) return "quad";
 
-  return "quad";
+  return "featured";
 };
 
 export const LocationDetailGallery = ({
@@ -118,15 +118,13 @@ export const LocationDetailGallery = ({
       }));
     };
 
-  const renderMediaPreview = (media: LocationMediaDto) => {
-    const mediaUrl = resolveMediaUrl(media.url);
-
+  const renderMediaPreview = (media: LocationMedia) => {
     if (media.type === "video") {
       return (
         <>
           <video
             className="location-detail__gallery-media"
-            src={mediaUrl}
+            src={media.url}
             muted
             playsInline
             preload="metadata"
@@ -140,7 +138,7 @@ export const LocationDetailGallery = ({
     return (
       <img
         className="location-detail__gallery-media"
-        src={mediaUrl}
+        src={media.url}
         alt={locationName}
         loading="lazy"
         onLoad={handleImageLoad(media.id)}
@@ -258,16 +256,9 @@ export const LocationDetailGallery = ({
                   ) : null}
 
                   {activeViewerItem.type === "video" ? (
-                    <video
-                      src={resolveMediaUrl(activeViewerItem.url)}
-                      controls
-                      autoPlay
-                    />
+                    <video src={activeViewerItem.url} controls autoPlay />
                   ) : (
-                    <img
-                      src={resolveMediaUrl(activeViewerItem.url)}
-                      alt={locationName}
-                    />
+                    <img src={activeViewerItem.url} alt={locationName} />
                   )}
                 </div>
 

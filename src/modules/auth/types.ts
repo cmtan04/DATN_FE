@@ -13,6 +13,35 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface AuthMessageResponse {
+  status?: boolean;
+  message?: string;
+  resetToken?: string; // Assuming the API response includes a reset token for password reset
+}
+
+export interface GetOtpRequest {
+  email: string;
+}
+
+export interface VerifyOtpRequest {
+  email: string;
+  otp: string;
+}
+
+export interface ResetPasswordRequest {
+  resetToken: string;
+  password: string;
+}
+
+export interface ForgotPasswordOtpFormValues {
+  otp: string;
+}
+
+export interface ForgotPasswordResetFormValues {
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export interface AuthResponse {
   accessToken?: string;
   refreshToken?: string;
@@ -25,10 +54,14 @@ export interface SignUpFormValues extends RegisterRequest {
   termsAccepted: boolean;
 }
 
+export interface AuthRedirectLocation {
+  pathname?: string;
+  search?: string;
+  hash?: string;
+}
+
+export type LoginRequiredSource = "intercept" | "protected-route";
+
 export interface SignInLocationState {
-  from?: {
-    pathname?: string;
-    search?: string;
-    hash?: string;
-  };
-};
+  from?: AuthRedirectLocation;
+}

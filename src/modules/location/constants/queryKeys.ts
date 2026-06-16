@@ -1,18 +1,13 @@
 import type { LocationQueryFilter } from "../api/location.api";
 
 export const LOCATION_QUERY_KEYS = {
+  all: ["locations"] as const,
   list: (filter: LocationQueryFilter) =>
     [
       "locations",
       "list",
       filter.searchValue ?? filter.keyword,
       filter.locationTypeId,
-      filter.addressRegion ?? filter.region,
-      filter.amenityKeywords?.join(","),
-      filter.bedroomCount,
-      filter.ownerLiving,
-      filter.privateBathroom,
-      filter.furnitureLevel,
       filter.minPrice,
       filter.maxPrice,
       filter.minArea,
@@ -26,12 +21,7 @@ export const LOCATION_QUERY_KEYS = {
       "map",
       filter.searchValue ?? filter.keyword,
       filter.locationTypeId,
-      filter.addressRegion ?? filter.region,
-      filter.amenityKeywords?.join(","),
-      filter.bedroomCount,
-      filter.ownerLiving,
-      filter.privateBathroom,
-      filter.furnitureLevel,
+
       filter.minPrice,
       filter.maxPrice,
       filter.minArea,

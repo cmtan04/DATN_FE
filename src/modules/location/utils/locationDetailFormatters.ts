@@ -1,20 +1,21 @@
 import type {
-  LocationAddressDto,
-  LocationDetailDto,
-  LocationMediaDto,
-  LocationServiceDto,
+  LocationAddress,
+  LocationDetail,
+  LocationMedia,
+  LocationServiceItem,
 } from "../types";
+import { resolveMediaUrl } from "./media";
 
 const LOCATION_GALLERY_MEDIA_TYPES = ["image", "video", "image360"];
 
 const isGalleryMedia = (
-  media?: LocationMediaDto | null,
-): media is LocationMediaDto =>
+  media?: LocationMedia | null,
+): media is LocationMedia =>
   Boolean(media?.url && LOCATION_GALLERY_MEDIA_TYPES.includes(media.type));
 
 const sortLocationMediaByDisplayOrder = (
-  mediaItems: LocationMediaDto[],
-): LocationMediaDto[] =>
+  mediaItems: LocationMedia[],
+): LocationMedia[] =>
   [...mediaItems].sort(
     (firstMedia, secondMedia) =>
       Number(firstMedia.displayOrder ?? Number.MAX_SAFE_INTEGER) -
@@ -41,42 +42,41 @@ export const formatLocationDate = (value?: string | Date) => {
 };
 
 export const getLocationGalleryItems = (
-  location: LocationDetailDto,
-): LocationMediaDto[] => {
+  location: LocationDetail,
+): LocationMedia[] => {
   const galleryMedia = sortLocationMediaByDisplayOrder(
     location.media?.filter(isGalleryMedia) ?? [],
   );
 
-  if (galleryMedia.length) {
-    return galleryMedia;
-  }
-
-  return isGalleryMedia(location.thumbnailMedia) ? [location.thumbnailMedia] : [];
+  return galleryMedia.map((media) => ({
+    ...media,
+    url: resolveMediaUrl(media.url),
+  }));
 };
 
 export const getLocationDescriptionMediaItems = (
-  location: LocationDetailDto,
-): LocationMediaDto[] => {
+  location: LocationDetail,
+): LocationMedia[] => {
   return (
-    location.media?.filter((media) =>
+    location.media?.filter((media: LocationMedia) =>
       ["image", "video", "image360"].includes(media.type),
     ) ?? []
   );
 };
 
 export const getLocationServiceDescription = (
-  service: LocationServiceDto,
+  service: LocationServiceItem,
 ) => (service.isFree ? "Mien phi" : "Dich vu tinh phi");
 
 export const getLocationDisplayAddresses = (
-  location: LocationDetailDto,
-): LocationAddressDto[] => {
+  location: LocationDetail,
+): LocationAddress[] => {
   return location.address ? [location.address] : [];
 };
 
 export const hasValidLocationCoordinates = (
-  address?: LocationAddressDto,
-): address is LocationAddressDto & { lat: number; lng: number } =>
+  address?: LocationAddress,
+): address is LocationAddress & { lat: number; lng: number } =>
   typeof address?.lat === "number" &&
   Number.isFinite(address.lat) &&
   typeof address.lng === "number" &&

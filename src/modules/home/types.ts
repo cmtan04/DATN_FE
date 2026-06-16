@@ -1,9 +1,9 @@
 import type { SegmentedProps } from "antd";
-import type { LocationDto } from "@shared/types/location";
+import type { LocationListItem } from "@shared/types/location";
 
-export type HomeLocation = LocationDto;
+export type HomeLocation = LocationListItem;
 export type RegionKey = "north" | "central" | "south";
-export type LocationSortBy = "price" | "area" | "rating" | "createdAt";
+export type LocationSortBy = "price" | "area" | "averageRating" | "createdAt";
 export type LocationSortOrder = "ASC" | "DESC";
 
 export interface PopularPlace {

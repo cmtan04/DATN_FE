@@ -1,10 +1,10 @@
 import { PhoneOutlined } from "@ant-design/icons";
 import { Avatar, Button, Card, Space, Typography } from "antd";
-import type { LocationOwnerDto } from "../../types";
+import type { LocationOwner } from "../../types";
 
 interface LocationOwnerCardProps {
   isOwner: boolean;
-  owner: LocationOwnerDto | null;
+  owner: LocationOwner | null;
 }
 
 export const LocationOwnerCard = ({
@@ -22,8 +22,13 @@ export const LocationOwnerCard = ({
     </Space>
 
     <Space direction="vertical" className="location-detail__contact">
-      {!isOwner && owner?.phone && (
-        <Button block type="primary" icon={<PhoneOutlined />} href={`tel:${owner.phone}`}>
+      {!isOwner && owner?.phoneNumber && (
+        <Button
+          block
+          type="primary"
+          icon={<PhoneOutlined />}
+          href={`tel:${owner.phoneNumber}`}
+        >
           Goi dien
         </Button>
       )}

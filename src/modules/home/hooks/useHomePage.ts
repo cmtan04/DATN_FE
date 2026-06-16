@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
 import type { RegionKey } from "../types";
 import { getfeaturedLocations, getNewLocations } from "../api/home.api";
+import { HOME_QUERY_KEYS } from "../constants/queryKeys";
 import { useHomeData } from "./useHomeData";
 
 export const useHomePage = () => {
@@ -24,7 +25,7 @@ export const useHomePage = () => {
     isLoading: isFeaturedLocationsLoading,
     isError: isFeaturedLocationsError,
   } = useQuery({
-    queryKey: ["home-featuredLocations"],
+    queryKey: HOME_QUERY_KEYS.featuredLocations,
     queryFn: () => getfeaturedLocations(),
   });
 
@@ -33,7 +34,7 @@ export const useHomePage = () => {
     isLoading: isNewLocationsLoading,
     isError: isNewLocationsError,
   } = useQuery({
-    queryKey: ["home-newLocations"],
+    queryKey: HOME_QUERY_KEYS.newLocations,
     queryFn: () => getNewLocations(),
   });
 
@@ -64,7 +65,7 @@ export const useHomePage = () => {
       return;
     }
 
-    navigate(`${ROUTER_PATH.LOCATIONS}?keyword=${encodeURIComponent(keyword)}`);
+    navigate(`${ROUTER_PATH.LOCATIONS}?q=${encodeURIComponent(keyword)}`);
   };
 
   const handleSearch = (value: string) => {
@@ -80,7 +81,7 @@ export const useHomePage = () => {
   };
 
   const handleViewHighestRating = () => {
-    navigate(`${ROUTER_PATH.LOCATIONS}?sortBy=rating&sortOrder=DESC`);
+    navigate(`${ROUTER_PATH.LOCATIONS}?sortBy=averageRating&sortOrder=DESC`);
   };
 
   const handleViewNewest = () => {

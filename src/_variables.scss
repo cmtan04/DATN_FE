@@ -1,0 +1,39 @@
+// ── Colour palette ──────────────────────────────────────────────────────────
+$primary:       #0b3d6b;
+$primary-dark:  #0a3260;
+$accent:        #d4a849;
+$accent-light:  rgba(212, 168, 73, 0.12);
+
+$background:    #f8f7f4;
+$foreground:    #0f1923;
+$card:          #ffffff;
+
+$secondary:     #e8f0f7;
+$muted:         #edeae3;
+$muted-fg:      #6b7280;
+$border:        rgba(15, 25, 35, 0.1);
+
+$danger:        #d4183d;
+$success:       #16a34a;
+
+// ── Typography ───────────────────────────────────────────────────────────────
+$font-display: 'Playfair Display', serif;
+$font-body:    'Inter', sans-serif;
+
+// ── Spacing ──────────────────────────────────────────────────────────────────
+$radius-sm:  8px;
+$radius-md:  12px;
+$radius-lg:  16px;
+$radius-xl:  20px;
+$radius-2xl: 24px;
+
+// ── Shadows ──────────────────────────────────────────────────────────────────
+$shadow-card:  0 2px 8px rgba(0, 0, 0, 0.05);
+$shadow-hover: 0 12px 32px rgba(11, 61, 107, 0.12);
+$shadow-modal: 0 25px 60px rgba(0, 0, 0, 0.25);
+
+// ── Breakpoints ──────────────────────────────────────────────────────────────
+$bp-sm:  576px;
+$bp-md:  768px;
+$bp-lg:  992px;
+$bp-xl:  1200px;

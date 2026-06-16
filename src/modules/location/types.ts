@@ -1,16 +1,16 @@
 export type {
-  LocationAddressDto,
-  LocationDetailDto,
-  LocationDto,
-  LocationFilterDto,
-  LocationMediaDto,
-  LocationOwnerDto,
-  LocationPricingDto,
-  LocationServiceDto,
+  GetLocationDetailResponse,
+  GetLocationsQuery,
+  GetLocationsResponse,
+  LocationAddress,
+  LocationDetail,
+  LocationListItem,
+  LocationMedia,
+  LocationOwner,
+  LocationServiceItem,
   LocationSortBy,
   LocationSortOrder,
-  LocationTypeDto,
-  PaginatedLocationDto,
+  LocationType,
 } from "@shared/types/location";
 
 export interface UpdateLocationServicePayload {

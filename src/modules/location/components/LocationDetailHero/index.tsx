@@ -1,13 +1,13 @@
 import { ArrowLeftOutlined, EnvironmentOutlined, StarFilled } from "@ant-design/icons";
 import { Breadcrumb, Button, Space, Tag, Typography } from "antd";
 import { ROUTER_PATH } from "@app/router/routes";
-import type { LocationAddressDto, LocationDetailDto } from "../../types";
+import type { LocationAddress, LocationDetail } from "../../types";
 
 interface LocationDetailHeroProps {
   heroBackgroundImage?: string;
-  location: LocationDetailDto;
+  location: LocationDetail;
   onBackToList: () => void;
-  primaryAddress?: LocationAddressDto;
+  primaryAddress?: LocationAddress;
 }
 
 export const LocationDetailHero = ({

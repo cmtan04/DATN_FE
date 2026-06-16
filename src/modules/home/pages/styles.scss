@@ -6,7 +6,7 @@
   color: $color-text-primary;
 
   &__alert {
-    width: min(calc(100% - 48px), 1132px);
+    width: min(calc(100% - 48px), 1200px);
     margin: 24px auto 0;
   }
 }
@@ -273,12 +273,6 @@
 }
 
 @media (max-width: 900px) {
-  .home-page {
-    &__main {
-      padding-top: 58px;
-    }
-  }
-
   .home-section {
     padding: 28px 16px 0;
 

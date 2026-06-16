@@ -1,0 +1,175 @@
+@use "@/variables.scss" as *;
+
+.location-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: $radius-lg;
+
+  .ant-card-cover {
+    flex: 0 0 auto;
+  }
+
+  .ant-card-body {
+    flex: 1;
+    padding: 12px;
+  }
+
+  &__media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-height: 150px;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgba($primary, 0.84), rgba($secondary, 0.45)),
+      radial-gradient(circle at 24% 18%, rgba($card, 0.22), transparent 30%);
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.25s ease;
+    }
+  }
+
+  &:hover {
+    .location-card__media img {
+      transform: scale(1.035);
+    }
+  }
+
+  &__media-fallback {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__favorite.ant-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: rgba($card, 0.94);
+    color: $primary;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  }
+
+  &__favorite-icon {
+    color: $danger;
+  }
+
+  &__type.ant-tag {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    max-width: calc(100% - 16px);
+    margin: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 999px;
+    background: rgba($card, 0.94);
+    color: $primary;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__copy {
+    min-height: 64px;
+  }
+
+  &__title.ant-typography {
+    display: -webkit-box;
+    margin: 0 0 4px;
+    overflow: hidden;
+    color: $primary;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  &__address.ant-typography {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: rgba($foreground, 0.68);
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    .ant-tag {
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 4px;
+      margin: 0;
+      padding: 4px 8px;
+      border: 1px solid rgba($primary, 0.14);
+      border-radius: 999px;
+      background: rgba($secondary, 0.16);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba($primary, 0.1);
+      color: $primary;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+  }
+
+  &__price {
+    min-width: 0;
+    overflow: hidden;
+    color: $primary;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 10px;
+    border-top: 1px solid $border;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-card {
+    &__media {
+      max-height: 170px;
+    }
+  }
+}

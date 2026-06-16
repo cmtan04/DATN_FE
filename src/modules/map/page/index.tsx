@@ -4,7 +4,7 @@ import {
   TagOutlined,
 } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Input, Radio, Spin } from "antd";
+import { Button, Input, Slider, Spin } from "antd";
 import { isAxiosError } from "axios";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -24,10 +24,12 @@ import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { ROUTER_PATH } from "@app/router/routes";
 import { getLocationsNearCoordinates } from "../../location/api/location.api";
 import { useMapAddressPicker } from "../../location/hooks/useMapAddressPicker";
-import type { LocationDto } from "../../location/types";
+import type { LocationListItem } from "../../location/types";
 import "./style.scss";
 
-const SEARCH_RADIUS_OPTIONS = [1, 3, 5, 10] as const;
+const MIN_RADIUS_KM = 0.1;
+const MAX_RADIUS_KM = 10;
+const RADIUS_STEP_KM = 0.1;
 const DEFAULT_RADIUS_KM = 3;
 const DEFAULT_LIMIT = 100;
 const DEFAULT_MESSAGE = "Da co loi xay ra. Vui long thu lai.";
@@ -51,9 +53,9 @@ L.Marker.prototype.options.icon = DefaultIcon;
 interface LocationMapCanvasProps {
   center: [number, number];
   radiusKm: number;
-  locations: LocationDto[];
+  locations: LocationListItem[];
   onCoordinateSelect: (value: { lat: number; lng: number }) => void;
-  onOpenDetail: (location: LocationDto) => void;
+  onOpenDetail: (location: LocationListItem) => void;
 }
 
 const parseCoordinate = (value?: string | number | null) => {
@@ -66,8 +68,11 @@ const parseCoordinate = (value?: string | number | null) => {
 const formatPrice = (price: number, unit?: string) =>
   `${price.toLocaleString()} VND${unit ? `/${unit}` : ""}`;
 
+const formatRadius = (radiusKm: number) =>
+  `${Number.isInteger(radiusKm) ? radiusKm : radiusKm.toFixed(1)} km`;
+
 const getLocationPosition = (
-  location: LocationDto,
+  location: LocationListItem,
 ): [number, number] | null => {
   const lat = parseCoordinate(location.address?.lat);
   const lng = parseCoordinate(location.address?.lng);
@@ -142,6 +147,8 @@ const LocationMapCanvas = ({
 
       return (
         <Marker key={location.id} position={position}>
+
+          <div className="location-map__popup-overlay" />
           <Popup>
             <div className="location-map__popup">
               {location.thumbnailMedia?.url && (
@@ -182,8 +189,8 @@ export const LocationMap = () => {
     () => [mapData.lat, mapData.long],
     [mapData.lat, mapData.long],
   );
-  const [radiusKm, setRadiusKm] =
-    useState<(typeof SEARCH_RADIUS_OPTIONS)[number]>(DEFAULT_RADIUS_KM);
+  const [sliderRadiusKm, setSliderRadiusKm] = useState(DEFAULT_RADIUS_KM);
+  const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
   const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: [
@@ -209,7 +216,7 @@ export const LocationMap = () => {
       DEFAULT_MESSAGE)
     : DEFAULT_MESSAGE;
 
-  const handleOpenDetail = (locationItem: LocationDto) => {
+  const handleOpenDetail = (locationItem: LocationListItem) => {
     navigate(
       ROUTER_PATH.LOCATION_DETAIL.replace(":id", String(locationItem.id)),
     );
@@ -225,17 +232,25 @@ export const LocationMap = () => {
             kinh.
           </p>
         </div>
-        <Radio.Group
-          className="location-map__radius"
-          value={radiusKm}
-          onChange={(event) => setRadiusKm(event.target.value)}
-          optionType="button"
-          buttonStyle="solid"
-          options={SEARCH_RADIUS_OPTIONS.map((value) => ({
-            label: `${value} km`,
-            value,
-          }))}
-        />
+        <div className="location-map__radius">
+          <div className="location-map__radius-head">
+            <span className="location-map__radius-label">
+              Ban kinh tim kiem
+            </span>
+            <strong className="location-map__radius-value">
+              {formatRadius(sliderRadiusKm)}
+            </strong>
+          </div>
+          <Slider
+            min={MIN_RADIUS_KM}
+            max={MAX_RADIUS_KM}
+            step={RADIUS_STEP_KM}
+            value={sliderRadiusKm}
+            tooltip={{ formatter: (value) => formatRadius(value ?? 0) }}
+            onChange={(value) => setSliderRadiusKm(value)}
+            onChangeComplete={(value) => setRadiusKm(value)}
+          />
+        </div>
       </div>
 
       <div className="location-map__layout">
@@ -318,7 +333,7 @@ export const LocationMap = () => {
 
           {!isLoading && !isError && locations.length === 0 && (
             <div className="location-map__state">
-              Khong co phong nao trong ban kinh {radiusKm} km.
+              Khong co phong nao trong ban kinh {formatRadius(radiusKm)}.
             </div>
           )}
 

@@ -1,0 +1,255 @@
+@use "@/color.scss" as *;
+
+.login-required-modal {
+  .ant-modal-content {
+    overflow: hidden;
+    padding: 0;
+    border-radius: 24px;
+    background: $color-white;
+    box-shadow: 0 28px 70px rgba(0, 41, 58, 0.24);
+    
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    gap: 40px;
+    background:
+      radial-gradient(circle at top left, rgba(20, 123, 167, 0.08), transparent 28%),
+      linear-gradient(180deg, #ffffff 0%, #f7fbfd 100%);
+  }
+
+  &__back-button.ant-btn {
+    width: fit-content;
+    justify-content: flex-start;
+    height: auto;
+    margin: 0 0 24px;
+    padding: 0;
+    color: rgba(0, 41, 58, 0.72);
+    font-weight: 700;
+  }
+
+  &__badge {
+    display: inline-flex;
+    width: 56px;
+    height: 56px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    border: 1px solid rgba(0, 41, 58, 0.08);
+    border-radius: 18px;
+    color: $secondary_color;
+    font-size: 24px;
+    background: rgba(0, 96, 156, 0.08);
+    box-shadow: 0 12px 30px rgba(0, 41, 58, 0.08);
+  }
+
+  &__content-stack {
+    width: 100%;
+  }
+
+  &__title.ant-typography {
+
+    margin: 0 0 10px;
+    color: $primary_color;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.18;
+  }
+
+  &__description.ant-typography {
+    max-width: 420px;
+    margin: 0;
+    color: rgba(51, 51, 51, 0.74);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  &__actions {
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  &__switch.ant-typography {
+    margin: -2px 0 2px;
+    color: rgba(51, 51, 51, 0.72);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  &__switch-link.ant-btn {
+    height: auto;
+    
+    padding-inline: 6px 0;
+    color: $secondary_color;
+    font-weight: 700;
+  }
+
+  &__button.ant-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    font-weight: 700;
+  }
+
+  &__button--primary.ant-btn {
+    box-shadow: 0 12px 24px rgba(0, 96, 156, 0.22);
+  }
+
+  &__button--ghost.ant-btn {
+    border-color: rgba(0, 41, 58, 0.1);
+    color: rgba(0, 41, 58, 0.72);
+    background: rgba(0, 41, 58, 0.03);
+  }
+
+  &__visual {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    padding: 36px 32px;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.24), transparent 24%),
+      linear-gradient(135deg, $primary_color 0%, $secondary_color 100%);
+  }
+
+  &__visual::before {
+    position: absolute;
+    top: -48px;
+    right: -42px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    content: "";
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &__visual::after {
+    position: absolute;
+    bottom: 24px;
+    left: -52px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    content: "";
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  &__visual-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 41, 58, 0.12) 0%,
+      rgba(0, 41, 58, 0.76) 100%
+    );
+  }
+
+  &__visual-content {
+    position: relative;
+    z-index: 1;
+    max-width: 280px;
+  }
+
+  &__visual-kicker.ant-typography {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    color: $color-white;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  &__visual-title.ant-typography {
+    margin: 0 0 12px;
+    color: $color-white;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.28;
+  }
+
+  &__visual-description.ant-typography {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+}
+
+@media (max-width: 900px) {
+  .login-required-modal {
+    width: calc(100vw - 32px) !important;
+    max-width: 680px;
+
+    &__layout {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    &__content {
+      padding: 32px 28px;
+    }
+
+    &__back-button.ant-btn {
+      margin-bottom: 20px;
+    }
+
+    &__visual {
+      min-height: 220px;
+      padding: 28px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .login-required-modal {
+    width: calc(100vw - 24px) !important;
+
+    .ant-modal-content {
+      border-radius: 20px;
+    }
+
+    &__content {
+      padding: 24px 20px;
+    }
+
+    &__back-button.ant-btn {
+      margin-bottom: 18px;
+    }
+
+    &__badge {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 18px;
+      border-radius: 16px;
+      font-size: 22px;
+    }
+
+    &__title.ant-typography {
+      font-size: 28px;
+    }
+
+    &__description.ant-typography {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    &__visual {
+      display: none;
+    }
+
+    &__button.ant-btn {
+      height: 46px;
+    }
+  }
+}

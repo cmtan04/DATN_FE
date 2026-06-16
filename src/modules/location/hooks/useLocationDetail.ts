@@ -1,19 +1,15 @@
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router/routes";
 import { useAuth } from "@app/providers/useAuth";
+import { useProtectedNavigation } from "@shared/hooks/useProtectedNavigation";
 import { getLocationDetail, getRelatedLocations } from "../api/location.api";
 import { LOCATION_QUERY_KEYS } from "../constants/queryKeys";
-import {
-  getLocationDescriptionMediaItems,
-  getLocationDisplayAddresses,
-  getLocationGalleryItems,
-} from "../utils/locationDetailFormatters";
-import { resolveMediaUrl } from "../utils/media";
+import { useToggleLocationFavorite } from "./useToggleLocationFavorite";
+import { message } from "antd";
 
-const DEFAULT_MESSAGE = "Da co loi xay ra. Vui long thu lai.";
+const DEFAULT_MESSAGE = "Đã có lỗi xảy ra. Vui lòng thử lại!";
 
 interface UseLocationDetailOptions {
   includeSimilar?: boolean;
@@ -24,63 +20,42 @@ export const useLocationDetail = (
   { includeSimilar = true }: UseLocationDetailOptions = {},
 ) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const toggleFavoriteMutation = useToggleLocationFavorite();
+  const navigateToProtectedRoute = useProtectedNavigation();
 
-  const detailQuery = useQuery({
+  const locationDetailQuery = useQuery({
     queryKey: LOCATION_QUERY_KEYS.detail(id ?? ""),
     queryFn: () => getLocationDetail(id as string),
     enabled: Boolean(id),
   });
 
-  const location = detailQuery.data;
-  const similarLocations = useQuery({
+  const location = locationDetailQuery.data;
+
+  // 2. Định nghĩa state liked ban đầu là false
+  const [liked, setLiked] = useState<boolean>(false);
+
+  // 3. Đồng bộ trạng thái liked từ API khi dữ liệu location tải xong
+  useEffect(() => {
+    if (location) {
+      // Hãy thay thế `location.isFavourite` bằng thuộc tính thực tế trong object location của bạn
+      setLiked(Boolean(location.isFavourite));
+    }
+  }, [location]);
+
+  const relatedLocationsQuery = useQuery({
     queryKey: LOCATION_QUERY_KEYS.related(id ?? ""),
     queryFn: () => getRelatedLocations(id as string),
     enabled: Boolean(includeSimilar && id && location?.id),
   });
 
-  const galleryItems = useMemo(
-    () => (location ? getLocationGalleryItems(location) : []),
-    [location],
-  );
-  const descriptionMediaItems = useMemo(
-    () => (location ? getLocationDescriptionMediaItems(location) : []),
-    [location],
-  );
-  const addresses = useMemo(
-    () => (location ? getLocationDisplayAddresses(location) : []),
-    [location],
-  );
-  const activeServices = useMemo(
-    () => location?.services?.filter((service) => service.isActive !== 0) ?? [],
-    [location?.services],
-  );
-  const includedServices = useMemo(
-    () => activeServices.filter((service) => service.isFree),
-    [activeServices],
-  );
-  const addonServices = useMemo(
-    () => activeServices.filter((service) => !service.isFree),
-    [activeServices],
-  );
-  const heroBackgroundMedia = galleryItems.find(
-    (media) => media.type === "image" || media.type === "image360",
-  );
-  const heroBackgroundImage = heroBackgroundMedia?.url
-    ? resolveMediaUrl(heroBackgroundMedia.url)
-    : undefined;
-  const primaryAddress = addresses[0];
   const isOwner = Boolean(user?.id && location?.owner?.id === user.id);
-  const errorMessage = isAxiosError(detailQuery.error)
-    ? ((detailQuery.error.response?.data as { message?: string } | undefined)
-        ?.message ?? DEFAULT_MESSAGE)
-    : DEFAULT_MESSAGE;
 
   const handleBackToList = () => {
     navigate(ROUTER_PATH.LOCATIONS);
   };
 
-  const handleOpenSimilarLocation = (locationId: string | number) => {
+  const handleOpenRelatedLocation = (locationId: string | number) => {
     navigate(
       `/${ROUTER_PATH.LOCATION_DETAIL.replace(":id", String(locationId))}`,
     );
@@ -89,28 +64,52 @@ export const useLocationDetail = (
   const handleOpenBooking = () => {
     if (!location?.id) return;
 
-    navigate(
+    navigateToProtectedRoute(
       `/${ROUTER_PATH.LOCATION_BOOKING.replace(":id", String(location.id))}`,
     );
   };
-
+  const handleToggleFavourite = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.stopPropagation();
+    if (!isAuthenticated) {
+      message.info(
+        "Vui lòng đăng nhập để thêm địa điểm vào danh sách yêu thích!",
+      );
+      return;
+    }
+    toggleFavoriteMutation
+      .mutateAsync(Number(id))
+      .then((response) => {
+        setLiked(response.isFavourite);
+        message.success(
+          response.isFavourite
+            ? "Đã thêm địa điểm vào yêu thích!"
+            : "Đã bỏ yêu thích địa điểm!",
+        );
+      })
+      .catch((error) => {
+        message.error(
+          `Đã có lỗi xảy ra khi ${liked ? "bỏ" : "thêm"} địa điểm yêu thích. Vui lòng thử lại!`,
+        );
+        console.error("Toggle favorite error:", error);
+      });
+  };
   return {
-    ...detailQuery,
-    addonServices,
-    addresses,
-    data: detailQuery.data,
-    descriptionMediaItems,
-    errorMessage,
-    galleryItems,
+    location,
+    isLoading: locationDetailQuery.isLoading,
+    isError: locationDetailQuery.isError,
+    isFetching: locationDetailQuery.isFetching,
+    errorMessage: DEFAULT_MESSAGE,
+    isOwner,
+    liked,
+    isTogglingFavorite: toggleFavoriteMutation.isPending,
+    isRelatedLocationLoading: relatedLocationsQuery.isLoading,
+    relatedLocations: relatedLocationsQuery.data?.data ?? [],
+    refetch: locationDetailQuery.refetch,
     handleBackToList,
     handleOpenBooking,
-    handleOpenSimilarLocation,
-    heroBackgroundImage,
-    includedServices,
-    isOwner,
-    isSimilarLoading: similarLocations.isLoading,
-    location,
-    primaryAddress,
-    similarLocationItems: similarLocations.data?.data ?? [],
+    handleOpenRelatedLocation,
+    handleToggleFavourite,
   };
 };

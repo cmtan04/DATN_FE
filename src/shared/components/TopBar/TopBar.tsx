@@ -29,6 +29,7 @@ import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@app/providers/useAuth";
 import { ROUTER_PATH } from "@app/router";
+import { useProtectedNavigation } from "@shared/hooks/useProtectedNavigation";
 import {
   useMarkNotificationRead,
   useNotifications,
@@ -40,9 +41,19 @@ import type { MenuProps } from "antd";
 const OWNER_USER_ROLE = 1;
 const OWNER_REQUEST_PENDING = 1;
 const OWNER_REQUEST_APPROVED = 2;
+const TOPBAR_PROTECTED_PATHS = new Set([
+  ROUTER_PATH.CHAT,
+  ROUTER_PATH.USER_PROFILE,
+  ROUTER_PATH.USER_BOOKINGS,
+  ROUTER_PATH.USER_FAVORITES,
+  ROUTER_PATH.PROFILE,
+  ROUTER_PATH.MY_LOCATIONS,
+  ROUTER_PATH.PACKAGE,
+]);
 
 export const TopBar = () => {
   const navigate = useNavigate();
+  const navigateToProtectedRoute = useProtectedNavigation();
   const location = useLocation();
   const { message } = AntdApp.useApp();
   const { user, isAuthenticated, signOut, setUser } = useAuth();
@@ -110,6 +121,12 @@ export const TopBar = () => {
 
   const handleMenuClick = ({ key }: { key: string }) => {
     setMenuDrawerOpen(false);
+
+    if (TOPBAR_PROTECTED_PATHS.has(key)) {
+      navigateToProtectedRoute(key);
+      return;
+    }
+
     navigate(key);
   };
 
@@ -157,7 +174,7 @@ export const TopBar = () => {
       return;
     }
 
-    handleNavigate(key);
+    navigateToProtectedRoute(key);
   };
 
   const notificationContent = (

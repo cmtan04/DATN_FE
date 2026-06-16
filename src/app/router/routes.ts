@@ -3,6 +3,7 @@ const ROUTER = "";
 export const ROUTER_NAME = {
   SIGNIN: "signin",
   SIGNUP: "signup",
+  FORGOT_PASSWORD: "forgot-password",
   HOME: "home",
   LOCATIONS: "locations",
   LOCATION_DETAIL: "locations/:id",
@@ -21,6 +22,7 @@ export const ROUTER_NAME = {
 export const ROUTER_PATH = {
   SIGNIN: `${ROUTER}/${ROUTER_NAME.SIGNIN}`,
   SIGNUP: `${ROUTER}/${ROUTER_NAME.SIGNUP}`,
+  FORGOT_PASSWORD: `${ROUTER}/${ROUTER_NAME.FORGOT_PASSWORD}`,
   HOME: `${ROUTER}/${ROUTER_NAME.HOME}`,
   LOCATIONS: `${ROUTER}/${ROUTER_NAME.LOCATIONS}`,
   LOCATION_DETAIL: `${ROUTER}/${ROUTER_NAME.LOCATION_DETAIL}`,

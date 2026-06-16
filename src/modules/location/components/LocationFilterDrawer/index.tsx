@@ -31,7 +31,7 @@ const SORT_OPTIONS = [
   { label: "Giá: Cao đến Thấp", value: "price-DESC" },
   { label: "Diện tích: Nhỏ đến Lớn", value: "area-ASC" },
   { label: "Diện tích: Lớn đến Nhỏ", value: "area-DESC" },
-  { label: "Đánh giá tốt nhất", value: "rating-DESC" },
+  { label: "Đánh giá tốt nhất", value: "averageRating-DESC" },
 ];
 
 const { useBreakpoint } = Grid;
@@ -58,7 +58,7 @@ export const LocationFilterDrawer = ({
 
     form.setFieldsValue({
       keyword: initialFilter.searchValue,
-      addressRegion: initialFilter.addressRegion,
+      guestCount: initialFilter.guestCount,
       locationTypeId: initialFilter.locationTypeId ?? 0,
       priceRange: [
         initialFilter.minPrice ?? 0,
@@ -82,12 +82,9 @@ export const LocationFilterDrawer = ({
 
     return {
       searchValue: values.keyword?.trim() || undefined,
-      addressRegion: values.addressRegion,
+      guestCount: values.guestCount,
       locationTypeId:
         values.locationTypeId === 0 ? undefined : values.locationTypeId,
-      amenityKeywords: values.quickKeywords?.length
-        ? values.quickKeywords
-        : undefined,
       minPrice: values.priceRange?.[0] > 0 ? values.priceRange[0] : undefined,
       maxPrice:
         values.priceRange?.[1] < 20000000 ? values.priceRange[1] : undefined,
@@ -98,7 +95,13 @@ export const LocationFilterDrawer = ({
     };
   };
 
-  const handleValuesChange = () => {
+  const handleValuesChange = (changedValues: Record<string, unknown>) => {
+    if (!isDesktop) return;
+    if ("priceRange" in changedValues || "areaRange" in changedValues) return;
+    onApply(getFilterFromForm());
+  };
+
+  const handleRangeChangeComplete = () => {
     if (!isDesktop) return;
     onApply(getFilterFromForm());
   };
@@ -152,6 +155,7 @@ export const LocationFilterDrawer = ({
           step={500000}
           marks={{ 0: "0", 20000000: "20tr+" }}
           tooltip={{ formatter: (value) => `${value?.toLocaleString()}d` }}
+          onChangeComplete={handleRangeChangeComplete}
         />
       </Form.Item>
       <div className="location-filter__range-label">
@@ -171,6 +175,7 @@ export const LocationFilterDrawer = ({
           step={5}
           marks={{ 0: "0", 200: "200+" }}
           tooltip={{ formatter: (value) => `${value} m2` }}
+          onChangeComplete={handleRangeChangeComplete}
         />
       </Form.Item>
       <div className="location-filter__range-label">

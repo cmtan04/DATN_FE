@@ -1,19 +1,18 @@
-import { Alert, App as AntdApp, Button, Checkbox, Form, Typography } from "antd";
+import {
+  Alert,
+  App as AntdApp,
+  Button,
+  Checkbox,
+  Form,
+  Typography,
+} from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
 import { useAuth } from "@app/providers/useAuth";
 import { FormInput } from "@shared/components/FormInput/formInput";
 import { FormPassword } from "@shared/components/FormPassword/formPassword";
 import { AuthLayout } from "../../components/AuthLayout";
-import type { LoginRequest } from "../../types";
-
-type SignInLocationState = {
-  from?: {
-    pathname?: string;
-    search?: string;
-    hash?: string;
-  };
-};
+import type { LoginRequest, SignInLocationState } from "../../types";
 
 export const SignIn = () => {
   const [form] = Form.useForm<LoginRequest>();
@@ -32,23 +31,17 @@ export const SignIn = () => {
     try {
       const response = await signIn(values);
       message.success(response.message || "Đăng nhập thành công.");
-      navigate(redirectPath, { replace: true });
+      navigate(redirectPath, { replace: false });
     } catch {
-      // AuthProvider đã normalize lỗi vào authError để Alert hiển thị nhất quán.
+      // AuthProvider already normalizes auth errors for a consistent Alert.
     }
   };
 
   return (
-    <AuthLayout
-      visualTitle="Khám phá không gian phù hợp"
-      visualDescription="Theo dõi địa điểm, kết nối hồ sơ và bắt đầu trải nghiệm nhanh hơn."
-    >
+    <AuthLayout>
       <Typography.Title level={1} className="auth-page__title">
         Đăng nhập
       </Typography.Title>
-      <Typography.Paragraph className="auth-page__subtitle">
-        Truy cập tài khoản để tiếp tục quản lý địa điểm và hồ sơ của bạn.
-      </Typography.Paragraph>
 
       {authError ? (
         <Alert
@@ -99,9 +92,12 @@ export const SignIn = () => {
           <Form.Item name="rememberMe" valuePropName="checked" noStyle>
             <Checkbox>Ghi nhớ đăng nhập</Checkbox>
           </Form.Item>
-          <Button type="link" className="auth-page__link-button">
+          <Link
+            className="auth-page__link-button"
+            to={ROUTER_PATH.FORGOT_PASSWORD}
+          >
             Quên mật khẩu?
-          </Button>
+          </Link>
         </div>
 
         <Button
@@ -118,7 +114,10 @@ export const SignIn = () => {
       </Form>
 
       <Typography.Paragraph className="auth-page__switch">
-        Chưa có tài khoản? <Link to={ROUTER_PATH.SIGNUP}>Đăng kí ngay</Link>
+        Chưa có tài khoản?{" "}
+        <Link to={ROUTER_PATH.SIGNUP} state={locationState}>
+          Đăng ký ngay
+        </Link>
       </Typography.Paragraph>
     </AuthLayout>
   );

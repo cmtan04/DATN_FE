@@ -6,10 +6,15 @@ import {
   clearAuthToken,
   persistAuthToken,
 } from "@/shared/services/auth.storage";
+import { ROUTER_PATH } from "@app/router";
 import { userApi } from "@modules/user/api/user.api";
+import { HOME_QUERY_KEYS } from "@modules/home/constants/queryKeys";
+import { LOCATION_QUERY_KEYS } from "@modules/location/constants/queryKeys";
 import type {
+  AuthRedirectLocation,
   AuthResponse,
   LoginRequest,
+  LoginRequiredSource,
   RegisterRequest,
 } from "@modules/auth/types";
 import { AuthContext } from "./authContext";
@@ -23,10 +28,19 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+
   const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(null);
   const [hasToken, setHasToken] = useState(() => authApi.hasAccessToken());
   const [authError, setAuthError] = useState("");
+  const [loginRequiredRoute, setLoginRequiredRoute] =
+    useState<AuthRedirectLocation | null>(null);
+  const [loginRequiredSource, setLoginRequiredSource] =
+    useState<LoginRequiredSource | null>(null);
+  const [suppressedLoginRequiredRoute, setSuppressedLoginRequiredRoute] =
+    useState<AuthRedirectLocation | null>(null);
+      // const navigate = useNavigate();
+
 
   // AuthContext gom toàn bộ luồng xác thực để page chỉ cần gọi một API ổn định:
   // đăng nhập, đăng kí, đăng xuất, bootstrap user và trạng thái loading/error.
@@ -63,6 +77,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
+  const invalidateAuthSensitiveLocationQueries = useCallback(() => {
+    void queryClient.invalidateQueries({
+      queryKey: HOME_QUERY_KEYS.featuredLocations,
+    });
+    void queryClient.invalidateQueries({
+      queryKey: HOME_QUERY_KEYS.newLocations,
+    });
+    void queryClient.invalidateQueries({
+      queryKey: LOCATION_QUERY_KEYS.all,
+    });
+  }, [queryClient]);
+
   const signInMutation = useMutation({
     mutationFn: (values: LoginRequest) => authApi.signIn(values),
     onMutate: () => {
@@ -70,6 +96,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     },
     onSuccess: (response) => {
       persistAuthenticatedSession(response);
+      invalidateAuthSensitiveLocationQueries();
     },
     onError: (error) => {
       setAuthError(getAuthErrorMessage(error));
@@ -83,6 +110,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     },
     onSuccess: (response) => {
       persistAuthenticatedSession(response);
+      invalidateAuthSensitiveLocationQueries();
     },
     onError: (error) => {
       setAuthError(getAuthErrorMessage(error));
@@ -106,8 +134,58 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setHasToken(false);
     setUser(null);
     setAuthError("");
+    setLoginRequiredRoute(null);
+    setLoginRequiredSource(null);
+    setSuppressedLoginRequiredRoute(null);
     queryClient.removeQueries({ queryKey: currentUserQueryKey });
+    window.location.href = ROUTER_PATH.HOME; // Đổi cách điều hướng để đảm bảo reload lại toàn bộ state sau khi đăng xuất
   }, [queryClient]);
+
+  const openLoginRequired = useCallback(
+    (
+      location: AuthRedirectLocation,
+      source: LoginRequiredSource = "protected-route",
+    ) => {
+      if (
+        location.pathname === ROUTER_PATH.SIGNIN ||
+        location.pathname === ROUTER_PATH.SIGNUP
+      ) {
+        return;
+      }
+
+      setLoginRequiredSource(source);
+      setLoginRequiredRoute((currentRoute) => {
+        if (
+          currentRoute?.pathname === location.pathname &&
+          currentRoute?.search === location.search &&
+          currentRoute?.hash === location.hash
+        ) {
+          return currentRoute;
+        }
+
+        return location;
+      });
+    },
+    [],
+  );
+
+  const closeLoginRequired = useCallback(() => {
+    setLoginRequiredRoute(null);
+    setLoginRequiredSource(null);
+  }, []);
+
+  const resolveBackFromProtected = useCallback(() => {
+    if (loginRequiredSource === "protected-route") {
+      setSuppressedLoginRequiredRoute(loginRequiredRoute);
+    }
+
+    setLoginRequiredRoute(null);
+    setLoginRequiredSource(null);
+  }, [loginRequiredRoute, loginRequiredSource]);
+
+  const clearSuppressedLoginRequired = useCallback(() => {
+    setSuppressedLoginRequiredRoute(null);
+  }, []);
 
   const contextValue = useMemo(
     () => ({
@@ -117,16 +195,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       isSigningIn: signInMutation.isPending,
       isSigningUp: signUpMutation.isPending,
       authError,
+      isLoginRequiredOpen: Boolean(loginRequiredRoute),
+      loginRequiredRoute,
+      loginRequiredSource,
+      suppressedLoginRequiredRoute,
       setUser,
       signIn,
       signUp,
       signOut,
+      openLoginRequired,
+      closeLoginRequired,
+      resolveBackFromProtected,
+      clearSuppressedLoginRequired,
     }),
     [
+      clearSuppressedLoginRequired,
       authError,
+      closeLoginRequired,
       currentUser,
       currentUserQuery.isFetching,
       hasToken,
+      loginRequiredRoute,
+      loginRequiredSource,
+      openLoginRequired,
+      resolveBackFromProtected,
+      suppressedLoginRequiredRoute,
       signIn,
       signInMutation.isPending,
       signOut,

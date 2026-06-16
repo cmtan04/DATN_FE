@@ -1,5 +1,5 @@
 import { Button, Col, Empty, Row, Skeleton, Typography } from "antd";
-import { LocationCard } from "@shared/components/LocationCard";
+import { LocationCard } from "@/modules/location/components/LocationCard";
 import type { HomeLocation } from "../types";
 
 interface HomeLocationSectionProps {
@@ -23,7 +23,6 @@ export const HomeLocationSection = ({
   isLoading,
   onActionClick,
   onViewDetail,
-  isNew = false,
 }: HomeLocationSectionProps) => (
   <section className="home-section">
     <div className="home-section__header">
@@ -46,7 +45,7 @@ export const HomeLocationSection = ({
       <Row gutter={[14, 14]}>
         {locations.map((location) => (
           <Col xs={24} sm={12} lg={6} key={location.id}>
-            <LocationCard location={location} onViewDetail={onViewDetail} isFeatured={!isNew} isNew={isNew} />
+            <LocationCard location={location} onClick={onViewDetail} />
           </Col>
         ))}
       </Row>

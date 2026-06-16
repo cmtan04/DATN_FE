@@ -1,15 +1,15 @@
 import { axiosClient } from "@shared/services/axiosClient";
 import type {
-  LocationDto,
-  PaginatedLocationDto,
+  GetLocationsResponse,
+  LocationListItem,
 } from "@shared/types/location";
 
-export const getfeaturedLocations = async (): Promise<LocationDto[]> => {
-  const response = await axiosClient.get<PaginatedLocationDto>("/locations", {
+export const getfeaturedLocations = async (): Promise<LocationListItem[]> => {
+  const response = await axiosClient.get<GetLocationsResponse>("/locations", {
     params: {
       page: 1,
       limit: 4,
-      sortBy: "rating",
+      sortBy: "averageRating",
       sortOrder: "DESC",
     },
   });
@@ -17,8 +17,8 @@ export const getfeaturedLocations = async (): Promise<LocationDto[]> => {
   return response.data.data;
 };
 
-export const getNewLocations = async (): Promise<LocationDto[]> => {
-  const response = await axiosClient.get<PaginatedLocationDto>("/locations", {
+export const getNewLocations = async (): Promise<LocationListItem[]> => {
+  const response = await axiosClient.get<GetLocationsResponse>("/locations", {
     params: {
       page: 1,
       limit: 4,

@@ -1,51 +1,88 @@
-import { Button, Col, Result, Row, Spin } from "antd";
-import { useParams } from "react-router-dom";
-import { LocationAddressCard } from "../../components/LocationAddressCard";
-import { LocationAmenitiesCard } from "../../components/LocationAmenitiesCard";
+import {
+  Breadcrumb,
+  Button,
+  Col,
+  Rate,
+  Result,
+  Row,
+  Spin,
+  Space,
+  message,
+  Tag,
+} from "antd";
+import { Link, useParams } from "react-router-dom";
 import { LocationBookingSummary } from "../../components/LocationBookingSummary";
 import { LocationDetailGallery } from "../../components/LocationDetailGallery";
-import { LocationDetailHero } from "../../components/LocationDetailHero";
-import { LocationDetailInfoCard } from "../../components/LocationDetailInfoCard";
 import { LocationOwnerCard } from "../../components/LocationOwnerCard";
 import { SimilarLocationsSection } from "../../components/SimilarLocationsSection";
 import { useLocationDetail } from "../../hooks/useLocationDetail";
-import type { LocationDetailDto } from "../../types";
+import { useToggleLocationFavorite } from "../../hooks/useToggleLocationFavorite";
+import type { LocationDetail as LocationDetailData } from "../../types";
+import {
+  EnvironmentOutlined,
+  HeartFilled,
+  HeartOutlined,
+  ShareAltOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 import "./style.scss";
+import { useEffect, useState } from "react";
+import { LocationDetailMap } from "../../components/LocationDetailMap";
+import { LocationAmenitiesCard } from "../../components/LocationAmenitiesCard";
+import { useAuth } from "@/app/providers/useAuth";
+import { LocationDetailTags } from "../../components/LocationDetail/Tags";
+import { LocationDetailHeader } from "../../components/LocationDetail/Header";
 
 interface LocationDetailViewProps {
   detail: ReturnType<typeof useLocationDetail> & {
-    location: LocationDetailDto;
+    location: LocationDetailData;
   };
-  onBackToList: () => void;
 }
 
-const LocationDetailView = ({
-  detail,
-  onBackToList,
-}: LocationDetailViewProps) => {
+const LocationDetailView = ({ detail }: LocationDetailViewProps) => {
   const { location } = detail;
 
   return (
     <main className="location-detail">
-      <LocationDetailHero
-        heroBackgroundImage={detail.heroBackgroundImage}
-        location={location}
-        onBackToList={onBackToList}
-        primaryAddress={detail.primaryAddress}
+      <div className="location-detail__breadcrumb">
+        <Breadcrumb
+          items={[
+            { title: <Link to="/">Trang chủ</Link> },
+            { title: <Link to="/locations">Khám phá</Link> },
+            { title: location.name },
+          ]}
+        />
+      </div>
+      <LocationDetailGallery
+        galleryItems={location.media}
+        locationName={location.name}
       />
 
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={15}>
-          <LocationDetailGallery
-            galleryItems={detail.galleryItems}
-            locationName={location.name}
-          />
-
-          <LocationDetailInfoCard location={location} />
-
-          <LocationAmenitiesCard
-            services={[...detail.includedServices, ...detail.addonServices]}
-          />
+          <div className="body">
+            <div className="main">
+              <LocationDetailTags
+                typeName={location.type?.name}
+                area={location.area}
+                maxGuestCount={location.maxGuestCount}
+              />
+              <LocationDetailHeader
+                location={location}
+                liked={detail.liked}
+                isTogglingFavorite={detail.isTogglingFavorite}
+                handleToggleFavourite={detail.handleToggleFavourite}
+              />
+              {/* Description */}
+              <div className="contentSection">
+                <h2>Giới thiệu</h2>
+                <p className="description">{location.description}</p>
+                <LocationDetailMap location={location} />
+                <h2>Tiện nghi & Dịch vụ</h2>
+                <LocationAmenitiesCard services={location.services ?? []} />
+              </div>
+            </div>
+          </div>
         </Col>
 
         <Col xs={24} lg={9}>
@@ -56,16 +93,11 @@ const LocationDetailView = ({
           />
 
           <LocationOwnerCard isOwner={detail.isOwner} owner={location.owner} />
-
-          <LocationAddressCard
-            addresses={detail.addresses}
-            location={location}
-          />
         </Col>
       </Row>
       <SimilarLocationsSection
-        locations={detail.similarLocationItems}
-        onOpenLocation={detail.handleOpenSimilarLocation}
+        locations={detail.relatedLocations}
+        onOpenLocation={detail.handleOpenRelatedLocation}
       />
     </main>
   );
@@ -74,8 +106,16 @@ const LocationDetailView = ({
 export const LocationDetail = () => {
   const { id } = useParams();
   const detail = useLocationDetail(id);
-  const { data, errorMessage, handleBackToList, isError, isLoading, refetch } =
-    detail;
+  const {
+    location,
+    errorMessage,
+    handleBackToList,
+    isError,
+    isLoading,
+    refetch,
+    handleToggleFavourite,
+    isTogglingFavorite,
+  } = detail;
 
   if (!id) {
     return (
@@ -123,7 +163,7 @@ export const LocationDetail = () => {
     );
   }
 
-  if (!data) {
+  if (!location) {
     return (
       <main className="location-detail">
         <Result
@@ -139,10 +179,5 @@ export const LocationDetail = () => {
     );
   }
 
-  return (
-    <LocationDetailView
-      detail={{ ...detail, location: data }}
-      onBackToList={handleBackToList}
-    />
-  );
+  return <LocationDetailView detail={{ ...detail, location }} />;
 };

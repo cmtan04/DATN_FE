@@ -1,0 +1,76 @@
+@use "@/variables" as *;
+
+.location-search-card {
+  background: #fff;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-modal;
+  overflow: hidden;
+}
+
+.location-search-card__fields {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 8px;
+  padding: 12px;
+  align-items: end;
+
+  @media (max-width: #{$bp-lg}) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: #{$bp-sm}) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.location-search-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-family: $font-body;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: $muted-fg;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .ant-input-affix-wrapper,
+  .ant-picker,
+  .ant-select-selector {
+    border-radius: $radius-md !important;
+    background: #f5f3ef !important;
+    border-color: transparent !important;
+    height: 44px;
+
+    &:hover {
+      border-color: $primary !important;
+    }
+  }
+
+  .ant-picker {
+    width: 100%;
+  }
+}
+
+.location-search-card__range-picker {
+  width: 100%;
+}
+
+.location-search-card__button {
+  height: 44px !important;
+  border-radius: $radius-md !important;
+  padding: 0 20px !important;
+  background: $primary !important;
+  border-color: $primary !important;
+  font-family: $font-body !important;
+  font-weight: 600 !important;
+  align-self: flex-end;
+
+  &:hover {
+    background: $primary-dark !important;
+    border-color: $primary-dark !important;
+  }
+}

@@ -1,0 +1,199 @@
+@use "@/variables.scss" as *;
+
+.section {
+  padding: 64px 24px;
+
+  &__shell {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  &__title {
+    font-family: $font-body;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: $accent;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  &__subtitle {
+    max-width: 640px;
+    margin: 14px 0 0;
+    color: rgba(51, 51, 51, 0.72);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  &__grid {
+    .ant-col {
+      display: flex;
+    }
+  }
+
+  &__card {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: 100%;
+    border: 1px solid rgba(0, 41, 58, 0.08);
+    border-radius: 16px;
+    flex-direction: column;
+    gap: 18px;
+    background: rgba(255, 255, 255, 0.86);
+    transition:
+      transform 0.24s ease,
+      box-shadow 0.24s ease,
+      border-color 0.24s ease;
+
+    &:hover {
+      border-color: rgba(47, 158, 143, 0.22);
+      box-shadow: 0 18px 36px rgba(0, 41, 58, 0.1);
+    }
+  }
+
+  &__icon-wrap {
+    display: inline-flex;
+    width: 100%;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px 16px 0 0;
+    background:
+      radial-gradient(
+        circle at top left,
+        rgba(47, 158, 143, 0.18),
+        transparent 55%
+      ),
+      linear-gradient(135deg, rgba(0, 41, 58, 0.06), rgba(212, 168, 73, 0.12));
+  }
+
+  &__lottie {
+    display: flex;
+    width: 100%;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+
+    > div {
+      width: 100%;
+      aspect-ratio: 1;
+    }
+  }
+
+  &__card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 8px 12px;
+    gap: 10px;
+  }
+
+  &__card-title {
+    margin: 0;
+    // color: $primary_color;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  &__card-description {
+    margin: 0;
+    color: rgba(51, 51, 51, 0.72);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 900px) {
+  .section {
+    padding: 32px 16px 44px;
+
+    &__shell {
+      padding: 24px 20px;
+      border-radius: 24px;
+    }
+
+    &__header {
+      margin-bottom: 22px;
+    }
+
+    &__subtitle {
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    &__card {
+      padding: 20px 18px;
+      border-radius: 20px;
+    }
+
+    &__icon-wrap {
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+    }
+
+    &__lottie {
+      width: 84px;
+      height: 84px;
+
+      > div {
+        width: 84px;
+        height: 84px;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .section {
+    &__shell {
+      padding: 22px 16px;
+    }
+
+    &__title {
+      font-size: 28px;
+    }
+
+    &__subtitle {
+      font-size: 14px;
+    }
+
+    &__card {
+      gap: 16px;
+    }
+
+    &__icon-wrap {
+      width: 88px;
+      height: 88px;
+    }
+
+    &__lottie {
+      width: 76px;
+      height: 76px;
+
+      > div {
+        width: 76px;
+        height: 76px;
+      }
+    }
+
+    &__card-title {
+      font-size: 18px;
+    }
+
+    &__card-description {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  }
+}
