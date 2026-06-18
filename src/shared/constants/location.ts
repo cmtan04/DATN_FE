@@ -1,3 +1,4 @@
+// Toa do mac dinh duoc ca Map route va LocationListMap dung, nen dat o shared de tranh module import nguoc nhau.
 export const DEFAULT_LOCATION_LATITUDE = 21.0285;
 export const DEFAULT_LOCATION_LONGITUDE = 105.8542;
 

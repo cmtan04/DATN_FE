@@ -3,7 +3,7 @@ const ROUTER = "";
 export const ROUTER_NAME = {
   SIGNIN: "signin",
   SIGNUP: "signup",
-  FORGOT_PASSWORD: "forgot-password",
+  FORGOT_PASSWORD: `forgot-password`,
   HOME: "home",
   LOCATIONS: "locations",
   LOCATION_DETAIL: "locations/:id",

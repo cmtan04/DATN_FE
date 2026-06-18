@@ -1,7 +1,7 @@
 import {
   DEFAULT_LOCATION_LATITUDE,
   DEFAULT_LOCATION_LONGITUDE,
-} from "./locationDefaults";
+} from "@shared/constants/location";
 
 export interface CurrentCoordinates {
   lat: number;

@@ -12,7 +12,7 @@ import { buildURLFromFilter, parseFilterFromURL } from "../utils/filter";
 export const useLocationList = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   const navigate = useNavigate();
   const hasHandledState = useRef(false);
 
@@ -22,7 +22,7 @@ export const useLocationList = () => {
       location?: string;
       guestCount?: string;
     } | null;
-    if ( !routeState?.location && !routeState?.guestCount) return;
+    if (!routeState?.location && !routeState?.guestCount) return;
 
     hasHandledState.current = true;
     const params = new URLSearchParams(searchParams);
@@ -54,7 +54,7 @@ export const useLocationList = () => {
   } = useInfiniteQuery({
     queryKey: LOCATION_QUERY_KEYS.list(filter),
     queryFn: ({ pageParam = 1 }) =>
-      getLocationByFilter({ ...filter, page: pageParam as number }),
+      getLocationByFilter({ ...filter, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const currentPage = Number(lastPage.meta.page) || 1;

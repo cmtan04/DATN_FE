@@ -267,7 +267,7 @@ export const ForgotPassword = () => {
       {errorMessage ? (
         <Alert
           className="auth-page__alert"
-          message={errorMessage}
+          title={errorMessage}
           type="error"
           showIcon
         />

@@ -9,7 +9,7 @@ import { ROUTER_PATH } from "@app/router";
 import "./loginRequiredModal.scss";
 
 const hasHistoryEntry = () => {
-  const historyState = window.history.state as { idx?: number } | null;
+  const historyState = globalThis.history.state as { idx?: number } | null;
 
   return typeof historyState?.idx === "number" && historyState.idx > 0;
 };

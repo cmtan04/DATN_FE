@@ -28,7 +28,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-
   const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(null);
   const [hasToken, setHasToken] = useState(() => authApi.hasAccessToken());
@@ -39,8 +38,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     useState<LoginRequiredSource | null>(null);
   const [suppressedLoginRequiredRoute, setSuppressedLoginRequiredRoute] =
     useState<AuthRedirectLocation | null>(null);
-      // const navigate = useNavigate();
-
 
   // AuthContext gom toàn bộ luồng xác thực để page chỉ cần gọi một API ổn định:
   // đăng nhập, đăng kí, đăng xuất, bootstrap user và trạng thái loading/error.
@@ -138,7 +135,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoginRequiredSource(null);
     setSuppressedLoginRequiredRoute(null);
     queryClient.removeQueries({ queryKey: currentUserQueryKey });
-    window.location.href = ROUTER_PATH.HOME; // Đổi cách điều hướng để đảm bảo reload lại toàn bộ state sau khi đăng xuất
+    globalThis.location.href = ROUTER_PATH.HOME; // Đổi cách điều hướng để đảm bảo reload lại toàn bộ state sau khi đăng xuất
   }, [queryClient]);
 
   const openLoginRequired = useCallback(

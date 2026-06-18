@@ -61,12 +61,11 @@ export const LocationBooking = () => {
   const { user } = useAuth();
   const checkoutMutation = useCreateCheckout();
   const {
-    data,
+    location,
     errorMessage,
     isError,
     isLoading,
     isOwner,
-    primaryAddress,
     refetch,
   } = useLocationDetail(id, { includeSimilar: false });
 
@@ -89,7 +88,7 @@ export const LocationBooking = () => {
   };
 
   const handleSubmit = async (values: LocationBookingFormValues) => {
-    if (!data?.id) {
+    if (!location?.id) {
       message.error("Khong tim thay phong can thanh toan.");
       return;
     }
@@ -98,7 +97,7 @@ export const LocationBooking = () => {
 
     try {
       const checkout = await checkoutMutation.mutateAsync({
-        locationId: data.id,
+        locationId: location.id,
         startDate: startDate.format("YYYY-MM-DD"),
         endDate: endDate.format("YYYY-MM-DD"),
         guestCount: values.guestCount,
@@ -160,7 +159,7 @@ export const LocationBooking = () => {
     );
   }
 
-  if (!data) {
+  if (!location) {
     return (
       <main className="location-booking">
         <Result
@@ -342,13 +341,13 @@ export const LocationBooking = () => {
               size={14}
               className="location-booking__room"
             >
-              <Typography.Title level={2}>{data.name}</Typography.Title>
+              <Typography.Title level={2}>{location.name}</Typography.Title>
               <Typography.Text className="location-booking__price">
-                {formatLocationPrice(data.price, data.priceUnit)}
+                {formatLocationPrice(location.price, location.priceUnit)}
               </Typography.Text>
-              {primaryAddress?.fullAddress ? (
+              {location.address?.fullAddress ? (
                 <p>
-                  <EnvironmentOutlined /> {primaryAddress.fullAddress}
+                  <EnvironmentOutlined /> {location.address.fullAddress}
                 </p>
               ) : null}
             </Space>
@@ -359,17 +358,17 @@ export const LocationBooking = () => {
                 {
                   key: "type",
                   label: "Loai hinh",
-                  children: data.type?.name ?? "Chua cap nhat",
+                  children: location.type?.name ?? "Chua cap nhat",
                 },
                 {
                   key: "area",
                   label: "Dien tich",
-                  children: formatLocationArea(data.area),
+                  children: formatLocationArea(location.area),
                 },
                 {
                   key: "owner",
                   label: "Chu so huu",
-                  children: data.owner?.fullName ?? "Chua cap nhat",
+                  children: location.owner?.fullName ?? "Chua cap nhat",
                 },
               ]}
             />

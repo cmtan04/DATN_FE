@@ -1,35 +1,14 @@
-import {
-  Breadcrumb,
-  Button,
-  Col,
-  Rate,
-  Result,
-  Row,
-  Spin,
-  Space,
-  message,
-  Tag,
-} from "antd";
+import { Breadcrumb, Button, Col, Result, Row, Spin } from "antd";
 import { Link, useParams } from "react-router-dom";
 import { LocationBookingSummary } from "../../components/LocationBookingSummary";
 import { LocationDetailGallery } from "../../components/LocationDetailGallery";
 import { LocationOwnerCard } from "../../components/LocationOwnerCard";
 import { SimilarLocationsSection } from "../../components/SimilarLocationsSection";
 import { useLocationDetail } from "../../hooks/useLocationDetail";
-import { useToggleLocationFavorite } from "../../hooks/useToggleLocationFavorite";
 import type { LocationDetail as LocationDetailData } from "../../types";
-import {
-  EnvironmentOutlined,
-  HeartFilled,
-  HeartOutlined,
-  ShareAltOutlined,
-  TeamOutlined,
-} from "@ant-design/icons";
 import "./style.scss";
-import { useEffect, useState } from "react";
 import { LocationDetailMap } from "../../components/LocationDetailMap";
 import { LocationAmenitiesCard } from "../../components/LocationAmenitiesCard";
-import { useAuth } from "@/app/providers/useAuth";
 import { LocationDetailTags } from "../../components/LocationDetail/Tags";
 import { LocationDetailHeader } from "../../components/LocationDetail/Header";
 
@@ -67,17 +46,17 @@ const LocationDetailView = ({ detail }: LocationDetailViewProps) => {
                 area={location.area}
                 maxGuestCount={location.maxGuestCount}
               />
-              <LocationDetailHeader
-                location={location}
-                liked={detail.liked}
-                isTogglingFavorite={detail.isTogglingFavorite}
-                handleToggleFavourite={detail.handleToggleFavourite}
-              />
+              <LocationDetailHeader location={location} />
+              <LocationDetailMap location={location} />
               {/* Description */}
               <div className="contentSection">
-                <h2>Giới thiệu</h2>
-                <p className="description">{location.description}</p>
-                <LocationDetailMap location={location} />
+                {location.description && (
+                  <>
+                    <h2>Giới thiệu</h2>
+                    <p className="description">{location.description}</p>
+                  </>
+                )}
+
                 <h2>Tiện nghi & Dịch vụ</h2>
                 <LocationAmenitiesCard services={location.services ?? []} />
               </div>
@@ -113,8 +92,6 @@ export const LocationDetail = () => {
     isError,
     isLoading,
     refetch,
-    handleToggleFavourite,
-    isTogglingFavorite,
   } = detail;
 
   if (!id) {

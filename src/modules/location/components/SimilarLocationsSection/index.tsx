@@ -18,7 +18,7 @@ export const SimilarLocationsSection = ({
   return (
     <section>
       <div className="location-detail__similar-head">
-        <Typography.Title level={2}>Lua chon tuong tu</Typography.Title>
+        <Typography.Title level={2}>Lựa chọn tương tự</Typography.Title>
       </div>
       <Row gutter={[16, 16]}>
         {locations.map((item) => (

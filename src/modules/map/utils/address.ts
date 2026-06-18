@@ -1,8 +1,8 @@
-import type { MapAddressDto, NominatimResponseDto } from "../types";
 import {
   DEFAULT_LOCATION_LATITUDE,
   DEFAULT_LOCATION_LONGITUDE,
-} from "./locationDefaults";
+} from "@shared/constants/location";
+import type { MapAddressDto, NominatimResponseDto } from "../types";
 
 const trimText = (value?: string | null) => value?.trim() ?? "";
 
@@ -76,7 +76,7 @@ const CITY_TO_REGION = [
   },
 ] as const;
 
-export const getRegionByCity = (city?: string): string => {
+const getRegionByCity = (city?: string): string => {
   const normalizedCity = normalizeCityName(city);
 
   if (!normalizedCity) {
@@ -103,19 +103,19 @@ export const createEmptyMapAddress = (
   lng = DEFAULT_LOCATION_LONGITUDE,
 ): MapAddressDto =>
   ({
-  lat,
-  long: lng,
-  addressDetail: "",
-  fullAddress: "",
-  addressWard: "",
-  addressCity: "",
-  addressCountry: "",
-  addressLat: String(lat),
-  addressLong: String(lng),
-  addressRegion: "",
-}) as MapAddressDto;
+    lat,
+    long: lng,
+    addressDetail: "",
+    fullAddress: "",
+    addressWard: "",
+    addressCity: "",
+    addressCountry: "",
+    addressLat: String(lat),
+    addressLong: String(lng),
+    addressRegion: "",
+  }) as MapAddressDto;
 
-export const buildAddressDetailFromNominatim = (
+const buildAddressDetailFromNominatim = (
   data: NominatimResponseDto,
 ): string => {
   const address = data.address || {};
@@ -136,7 +136,7 @@ export const buildAddressDetailFromNominatim = (
   return primaryLine || " ";
 };
 
-export const createFullAddressFromNominatim = (
+const createFullAddressFromNominatim = (
   data: NominatimResponseDto,
 ): string => {
   const address = data.address || {};

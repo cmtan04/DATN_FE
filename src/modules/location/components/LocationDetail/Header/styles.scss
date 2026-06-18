@@ -1,6 +1,7 @@
 @use "@/variables.scss" as *;
 
 .hotelHeader {
+  padding-bottom: 16px;
   .tags {
     display: flex;
     gap: 8px;

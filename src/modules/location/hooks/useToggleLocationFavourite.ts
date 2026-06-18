@@ -6,13 +6,13 @@ import type { LocationDetail } from "../types";
 import { useAuth } from "@/app/providers/useAuth";
 import { message } from "antd";
 
-export const useToggleLocationFavorite = (
+export const useToggleLocationFavourite = (
   id: string | number,
-  initialLiked: boolean = false,
+  initialLiked: boolean,
 ) => {
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
-  const toggleFavoriteMutation = useMutation({
+  const toggleFavouriteMutation = useMutation({
     mutationFn: () => toggleFavoriteLocation(id),
     onSuccess: (response) => {
       queryClient.setQueryData<LocationDetail | null>(
@@ -45,7 +45,7 @@ export const useToggleLocationFavorite = (
       );
       return;
     }
-    toggleFavoriteMutation
+    toggleFavouriteMutation
       .mutateAsync()
       .then((response) => {
         message.success(
@@ -62,7 +62,7 @@ export const useToggleLocationFavorite = (
 
   return {
     handleToggleFavourite,
-    isTogglingFavourite: toggleFavoriteMutation.isPending,
-    liked: toggleFavoriteMutation.data?.isFavourite ?? initialLiked,
+    isTogglingFavourite: toggleFavouriteMutation.isPending,
+    liked: toggleFavouriteMutation.data?.isFavourite ?? initialLiked,
   };
 };

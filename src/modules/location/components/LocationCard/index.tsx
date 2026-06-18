@@ -4,13 +4,11 @@ import {
   StarFilled,
   TeamOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Tag, Tooltip, Typography, message } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Card, Tag, Tooltip, Typography } from "antd";
 import type { LocationListItem } from "@shared/types/location";
 import { resolveMediaUrl } from "@shared/utils/media";
-import { useToggleLocationFavorite } from "@modules/location/hooks/useToggleLocationFavorite";
+import { useToggleLocationFavourite } from "@/modules/location/hooks/useToggleLocationFavourite";
 import "./styles.scss";
-import { useAuth } from "@/app/providers/useAuth";
 
 export interface LocationCardProps {
   location: LocationListItem;
@@ -29,7 +27,10 @@ export const LocationCard = ({
   onClick,
   onViewDetail,
 }: LocationCardProps) => {
-  const { isAuthenticated } = useAuth();
+  const { liked, isTogglingFavourite, handleToggleFavourite } =
+    useToggleLocationFavourite(location.id, location.isFavourite);
+
+  console.log("Rendering LocationCard for", location.name, "Liked:", liked);
   const title = location.name;
   const address = location.address?.fullAddress ?? DEFAULT_ADDRESS;
   const priceLabel = formatLocationPrice(location.price, location.priceUnit);
@@ -44,12 +45,6 @@ export const LocationCard = ({
   const maxGuestCount = Number(location.maxGuestCount);
   const shouldShowMaxGuestCount =
     Number.isFinite(maxGuestCount) && maxGuestCount > 0;
-  const [liked, setLiked] = useState<boolean>(location.isFavourite);
-  const toggleFavoriteMutation = useToggleLocationFavorite();
-
-  useEffect(() => {
-    setLiked(location.isFavourite);
-  }, [location.isFavourite]);
 
   const handleViewDetail = () => {
     if (onClick) {
@@ -58,32 +53,6 @@ export const LocationCard = ({
     }
 
     onViewDetail?.(location.id);
-  };
-
-  const handleFavorite = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    if (!isAuthenticated) {
-      message.info(
-        "Vui lòng đăng nhập để thêm địa điểm vào danh sách yêu thích!",
-      );
-      return;
-    }
-    toggleFavoriteMutation
-      .mutateAsync(location.id)
-      .then((response) => {
-        setLiked(response.isFavourite);
-        message.success(
-          response.isFavourite
-            ? "Đã thêm địa điểm vào yêu thích!"
-            : "Đã bỏ yêu thích địa điểm!",
-        );
-      })
-      .catch((error) => {
-        message.error(
-          `Đã có lỗi xảy ra khi ${liked ? "bỏ" : "thêm"} địa điểm yêu thích. Vui lòng thử lại!`,
-        );
-        console.error("Toggle favorite error:", error);
-      });
   };
 
   return (
@@ -109,9 +78,9 @@ export const LocationCard = ({
                 <HeartOutlined />
               )
             }
-            loading={toggleFavoriteMutation.isPending}
-            disabled={toggleFavoriteMutation.isPending}
-            onClick={handleFavorite}
+            loading={isTogglingFavourite}
+            disabled={isTogglingFavourite}
+            onClick={handleToggleFavourite}
           />
           <Tag className="location-card__type">{typeLabel}</Tag>
         </div>

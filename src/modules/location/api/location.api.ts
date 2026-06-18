@@ -34,19 +34,6 @@ const toLocationQueryParams = (filter: LocationQueryFilter) => ({
   sortOrder: filter.sortOrder,
 });
 
-const isLocationDetail = (value: unknown): value is LocationDetail =>
-  Boolean(
-    value &&
-    typeof value === "object" &&
-    "id" in value &&
-    "name" in value &&
-    "price" in value &&
-    "owner" in value &&
-    "address" in value &&
-    "media" in value &&
-    "services" in value,
-  );
-
 export const getAllLocationType = async (): Promise<LocationType[]> => {
   const response = await axiosClient.get<LocationType[]>(
     LocationEndpoint.GET_ALL_LOCATION_TYPE,
@@ -84,15 +71,7 @@ export const getLocationDetail = async (
     `${LocationEndpoint.GET_LOCATION_BY_CODE}/${id}`,
   );
 
-  if (response.data === null) {
-    return null;
-  }
-
-  if (isLocationDetail(response.data)) {
-    return response.data;
-  }
-
-  throw new Error("Khong tim thay du lieu chi tiet phong.");
+  return response.data as LocationDetail;
 };
 
 export const getRelatedLocations = async (
@@ -112,4 +91,16 @@ export const toggleFavoriteLocation = async (
     LocationEndpoint.TOGGLE_FAVORITE_LOCATION(id),
   );
   return { isFavourite: response.data.isFavourite };
+};
+
+export const getAvailableRooms = async (params: {
+  locationId: string | number;
+  startDate: string;
+  endDate: string;
+}): Promise<number> => {
+  const response = await axiosClient.get<any>(
+    LocationEndpoint.GET_AVAILABLE_ROOMS,
+    { params },
+  );
+  return response.data.availableRooms;
 };

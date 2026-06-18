@@ -6,19 +6,17 @@ import {
 } from "@ant-design/icons";
 import { Button, Rate, Space } from "antd";
 import type { LocationDetail } from "../../../types";
+import { useToggleLocationFavourite } from "../../../hooks/useToggleLocationFavourite";
 import "./styles.scss";
 
 export const LocationDetailHeader = ({
   location,
-  liked,
-  isTogglingFavorite,
-  handleToggleFavourite,
 }: {
   location: LocationDetail;
-  liked: boolean;
-  isTogglingFavorite: boolean;
-  handleToggleFavourite: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
+  const { liked, isTogglingFavourite, handleToggleFavourite } =
+    useToggleLocationFavourite(location.id, location.isFavourite);
+
   return (
     <div className="hotelHeader">
       <h1>{location.name}</h1>
@@ -39,8 +37,8 @@ export const LocationDetailHeader = ({
             icon={
               liked ? <HeartFilled className="heartRed" /> : <HeartOutlined />
             }
-            loading={isTogglingFavorite}
-            disabled={isTogglingFavorite}
+            loading={isTogglingFavourite}
+            disabled={isTogglingFavourite}
             onClick={handleToggleFavourite}
           />
           <Button shape="circle" icon={<ShareAltOutlined />} />

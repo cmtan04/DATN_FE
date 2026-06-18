@@ -46,7 +46,7 @@ export const SignIn = () => {
       {authError ? (
         <Alert
           className="auth-page__alert"
-          message={authError}
+          title={authError}
           type="error"
           showIcon
         />

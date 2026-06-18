@@ -2,12 +2,14 @@
 .location-detail {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 32px 0 48px;
+  padding-bottom: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 
   &__breadcrumb {
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 16px 24px;
+    padding: 16px 0 0;
   }
 
   &__nav {
@@ -92,10 +94,6 @@
     background: #fff7e6;
     color: #faad14;
     font-size: 18px;
-  }
-
-  &__gallery {
-    margin-bottom: 24px;
   }
 
   &__gallery-grid {
@@ -342,7 +340,7 @@
   &__map {
     .leaflet-top,
     .leaflet-bottom {
-      z-index: 30;
+      z-index: 675;
     }
   }
 
@@ -514,7 +512,7 @@
 
     .ant-typography {
       margin: 0;
-      color: rgba(0, 0, 0, 0.62);
+      font-family: $font-display;
     }
   }
 

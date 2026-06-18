@@ -43,11 +43,10 @@
     text-decoration: line-through;
   }
 }
-
-.widgetField {
+.dateField {
   label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     color: $muted-fg;
     font-family: $font-body;
     font-size: 0.72rem;
@@ -59,6 +58,34 @@
   .ant-picker,
   .ant-input-number {
     width: 100%;
+    border-color: transparent !important;
+    border-radius: $radius-md !important;
+    background: #f5f3ef !important;
+
+    &:hover {
+      border-color: $primary !important;
+    }
+  }
+}
+
+.widgetField {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: space-between;
+
+  label {
+    align-self: center;
+    color: $muted-fg;
+    font-family: $font-body;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ant-picker,
+  .ant-input-number {
     border-color: transparent !important;
     border-radius: $radius-md !important;
     background: #f5f3ef !important;
