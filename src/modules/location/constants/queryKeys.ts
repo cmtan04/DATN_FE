@@ -33,4 +33,5 @@ export const LOCATION_QUERY_KEYS = {
   detail: (id: string | number) => ["locations", "detail", id] as const,
   related: (id: string | number) => ["locations", "related", id] as const,
   types: ["locations", "types"] as const,
+  bookings: (id: string | number) => ["locations", "bookings", id] as const,
 };

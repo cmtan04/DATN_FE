@@ -15,13 +15,15 @@ import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import type { LocationDetail } from "../../types";
-import { getAvailableRooms } from "../../api/location.api";
+import { createBooking, getAvailableRooms } from "../../api/location.api";
 import "./styles.scss";
+import { ROUTER_PATH } from "@/app/router/routes";
+import { useProtectedNavigation } from "@shared/hooks/useProtectedNavigation";
+import { useLocationBooking } from "../../hooks/useLocationBooking";
 
 interface LocationBookingSummaryProps {
   isOwner: boolean;
   location: LocationDetail;
-  onOpenBooking: () => void;
 }
 
 type BookingDateRange = [Dayjs | null, Dayjs | null] | null;
@@ -32,7 +34,6 @@ const { RangePicker } = DatePicker;
 export const LocationBookingSummary = ({
   isOwner,
   location,
-  onOpenBooking,
 }: LocationBookingSummaryProps) => {
   const [dates, setDates] = useState<BookingDateRange>(null);
   const [rooms, setRooms] = useState(1);
@@ -40,6 +41,8 @@ export const LocationBookingSummary = ({
   // 1. Thêm flag kiểm soát xem người dùng đã bấm nút "Kiểm tra" hay chưa
   const [isSearched, setIsSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigateToProtectedRoute = useProtectedNavigation();
+  const { createBooking } = useLocationBooking(location.id);
 
   const pricing = useMemo(() => {
     const [startDate, endDate] = dates ?? [];
@@ -79,6 +82,9 @@ export const LocationBookingSummary = ({
       const roomsResult = await getAvailableRooms(params);
       setAvailableRooms(roomsResult);
       setIsSearched(true); // Đánh dấu đã check thành công để mở khóa các ô tiếp theo
+      if (roomsResult > 0) {
+        setRooms(1);
+      }
     } catch (error) {
       console.error("Lỗi kiểm tra phòng trống:", error);
     } finally {
@@ -89,9 +95,28 @@ export const LocationBookingSummary = ({
   // 3. Reset trạng thái tìm kiếm nếu người dùng thay đổi lại ngày tháng
   useEffect(() => {
     setIsSearched(false);
-    setAvailableRooms(0);
-    setRooms(1); // Reset lại số phòng về 1
   }, [dates]);
+
+  //Hàm xử lí tạo booking
+  const handleCreateBooking = async () => {
+    if (!canBook) return;
+
+    try {
+      const params = {
+        locationId: location.id,
+        startDate: dates?.[0]?.format("YYYY-MM-DD") || "",
+        endDate: dates?.[1]?.format("YYYY-MM-DD") || "",
+        totalAmount: pricing.total,
+        roomNumber: rooms,
+      };
+
+      await createBooking(params);
+      console.log("Booking created successfully!");
+      navigateToProtectedRoute(
+        `/${ROUTER_PATH.LOCATION_BOOKING.replace(":id", String(location.id))}`,
+      );
+    } catch {}
+  };
 
   return (
     <Card className="widget">
@@ -203,7 +228,7 @@ export const LocationBookingSummary = ({
                 size="large"
                 style={{ marginTop: 12 }}
                 disabled={!canBook}
-                onClick={onOpenBooking}
+                onClick={handleCreateBooking}
               >
                 Đặt ngay
               </Button>

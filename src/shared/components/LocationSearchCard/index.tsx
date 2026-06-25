@@ -5,7 +5,7 @@ import "./locationSearchCard.scss";
 
 const searchText = {
   destination: "Địa điểm",
-  guests: "Số khách",
+  guests: "Phòng dành cho",
   search: "Tìm kiếm",
 };
 

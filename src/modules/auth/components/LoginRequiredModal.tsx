@@ -1,10 +1,7 @@
-import {
-  ArrowLeftOutlined,
-  LoginOutlined,
-} from "@ant-design/icons";
+import { ArrowLeftOutlined, LoginOutlined } from "@ant-design/icons";
 import { Button, Modal, Space, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@app/providers/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ROUTER_PATH } from "@app/router";
 import "./loginRequiredModal.scss";
 
@@ -126,7 +123,7 @@ export const LoginRequiredModal = () => {
               level={4}
               className="login-required-modal__visual-title"
             >
-              Một lần đăng nhập, đầy đủ trải nghiệm 
+              Một lần đăng nhập, đầy đủ trải nghiệm
             </Typography.Title>
             <Typography.Paragraph className="login-required-modal__visual-description">
               Theo dõi lịch sử, nhận cập nhật đặt chỗ và quản lý thao tác của

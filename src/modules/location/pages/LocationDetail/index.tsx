@@ -68,7 +68,6 @@ const LocationDetailView = ({ detail }: LocationDetailViewProps) => {
           <LocationBookingSummary
             isOwner={detail.isOwner}
             location={location}
-            onOpenBooking={detail.handleOpenBooking}
           />
 
           <LocationOwnerCard isOwner={detail.isOwner} owner={location.owner} />

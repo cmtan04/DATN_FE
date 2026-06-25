@@ -1,21 +1,506 @@
-.user-bookings {
-  width: min(960px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 32px 0 48px;
+@use "@/variables" as *;
 
-  h1 {
-    margin: 0 0 20px;
-    color: #00293a;
-    font-size: 32px;
-    line-height: 1.25;
+// ── Page shell ───────────────────────────────────────────────────────────────
+.bookings-page {
+  min-height: 100vh;
+  background: $background;
+}
+
+// ── Page header ──────────────────────────────────────────────────────────────
+.bookings-header {
+  background: $primary;
+  padding: 40px 24px 60px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1400&h=300&fit=crop&auto=format")
+      center / cover;
+    opacity: 0.1;
   }
 
-  &__card {
-    border-radius: 8px;
+  &__inner {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
-  @media (max-width: 640px) {
-    width: min(100% - 20px, 960px);
-    padding-top: 24px;
+  &__title {
+    h1 {
+      font-family: $font-display;
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 4px;
+    }
+
+    p {
+      font-family: $font-body;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0;
+    }
+  }
+
+  &__stats {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__stat {
+    text-align: center;
+    padding: 12px 20px;
+    border-radius: $radius-lg;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    min-width: 100px;
+
+    .stat-num {
+      font-family: $font-display;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $accent;
+      display: block;
+    }
+
+    .stat-txt {
+      font-family: $font-body;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.65);
+      display: block;
+      margin-top: 2px;
+    }
+  }
+}
+
+// ── Content container ────────────────────────────────────────────────────────
+.bookings-content {
+  max-width: 1100px;
+  margin: -32px auto 64px;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+}
+
+// ── Filter toolbar ───────────────────────────────────────────────────────────
+.bookings-toolbar {
+  background: $card;
+  border-radius: $radius-xl;
+  border: 1px solid $border;
+  padding: 18px 24px;
+  box-shadow: $shadow-card;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  &__label {
+    font-family: $font-body;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $muted-fg;
+    white-space: nowrap;
+  }
+
+  .filter-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .filter-tag {
+    padding: 5px 16px;
+    border-radius: 999px;
+    border: 1px solid $border;
+    background: transparent;
+    font-family: $font-body;
+    font-size: 0.82rem;
+    color: $muted-fg;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: $primary;
+      color: $primary;
+    }
+
+    &.active {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  &__search {
+    margin-left: auto;
+    min-width: 220px;
+
+    .ant-input-affix-wrapper {
+      border-radius: $radius-md !important;
+      background: #f5f3ef !important;
+      border-color: transparent !important;
+
+      &:hover {
+        border-color: $primary !important;
+      }
+    }
+  }
+}
+
+// ── Booking card ─────────────────────────────────────────────────────────────
+.booking-card {
+  background: $card;
+  border-radius: $radius-xl;
+  border: 1px solid $border;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  transition:
+    box-shadow 0.25s,
+    transform 0.2s;
+  margin-bottom: 16px;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+
+  &__inner {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    align-items: stretch;
+
+    @media (max-width: #{$bp-md}) {
+      grid-template-columns: 140px 1fr;
+    }
+
+    @media (max-width: #{$bp-sm}) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Hotel image
+  &__img {
+    position: relative;
+    overflow: hidden;
+    background: $muted;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    &:hover img {
+      transform: scale(1.06);
+    }
+
+    .img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        transparent 60%,
+        rgba(11, 61, 107, 0.08)
+      );
+    }
+  }
+
+  // Main info
+  &__info {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  &__top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__hotel-name {
+    font-family: $font-display;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $foreground;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  &__room {
+    font-family: $font-body;
+    font-size: 0.82rem;
+    color: $muted-fg;
+    margin: 2px 0 0;
+  }
+
+  &__meta-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  &__meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .meta-label {
+      font-family: $font-body;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: $muted-fg;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .meta-val {
+      font-family: $font-body;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: $foreground;
+    }
+  }
+
+  &__code {
+    font-family: "Courier New", monospace;
+    font-size: 0.78rem;
+    color: $muted-fg;
+    background: $muted;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  // Price & actions panel
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-left: 1px solid $border;
+    min-width: 180px;
+    gap: 16px;
+
+    @media (max-width: #{$bp-md}) {
+      border-left: none;
+      border-top: 1px solid $border;
+      flex-direction: row;
+      align-items: center;
+      min-width: unset;
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__price {
+    text-align: right;
+
+    .price-total {
+      font-family: $font-display;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: $primary;
+      display: block;
+    }
+
+    .price-nights {
+      font-family: $font-body;
+      font-size: 0.75rem;
+      color: $muted-fg;
+    }
+  }
+
+  &__btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+
+    @media (max-width: #{$bp-md}) {
+      flex-direction: row;
+      width: auto;
+    }
+
+    .ant-btn {
+      border-radius: $radius-md !important;
+      font-family: $font-body !important;
+      font-size: 0.82rem !important;
+    }
+  }
+}
+
+// ── Status tags ──────────────────────────────────────────────────────────────
+.status-tag {
+  border-radius: 999px !important;
+  font-family: $font-body !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 2px 12px !important;
+  border: none !important;
+
+  &.confirmed {
+    background: #e6f4ff !important;
+    color: #0958d9 !important;
+  }
+  &.pending {
+    background: #fffbe6 !important;
+    color: #d46b08 !important;
+  }
+  &.completed {
+    background: #f6ffed !important;
+    color: #389e0d !important;
+  }
+  &.cancelled {
+    background: #fff2f0 !important;
+    color: #cf1322 !important;
+  }
+}
+
+// ── Empty state ──────────────────────────────────────────────────────────────
+.bookings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 80px 0;
+  gap: 16px;
+
+  .empty-icon {
+    font-size: 56px;
+    opacity: 0.25;
+  }
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.4rem;
+    color: $muted-fg;
+    margin: 0;
+  }
+
+  p {
+    font-family: $font-body;
+    font-size: 0.9rem;
+    color: $muted-fg;
+    margin: 0;
+  }
+}
+
+// ── Modify modal ─────────────────────────────────────────────────────────────
+.modify-modal {
+  .ant-modal-header {
+    border-bottom: 1px solid $border !important;
+    padding-bottom: 16px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .ant-modal-title {
+    font-family: $font-display !important;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    color: $foreground !important;
+  }
+
+  &__hotel-row {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    border-radius: $radius-lg;
+    background: $secondary;
+    margin-bottom: 24px;
+
+    img {
+      width: 72px;
+      height: 56px;
+      border-radius: $radius-md;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    h4 {
+      font-family: $font-display;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: $foreground;
+      margin: 0 0 2px;
+    }
+
+    p {
+      font-family: $font-body;
+      font-size: 0.8rem;
+      color: $muted-fg;
+      margin: 0;
+    }
+  }
+
+  .modal-form-label {
+    font-family: $font-body;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $muted-fg;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .modal-price-summary {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: $radius-lg;
+    background: $muted;
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-family: $font-body;
+      font-size: 0.85rem;
+      color: $muted-fg;
+
+      strong {
+        color: $foreground;
+      }
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid $border;
+      padding-top: 10px;
+      margin-top: 4px;
+
+      span {
+        font-family: $font-body;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: $foreground;
+      }
+
+      strong {
+        font-family: $font-display;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $primary;
+      }
+    }
   }
 }

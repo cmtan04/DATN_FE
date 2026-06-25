@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router/routes";
-import { useAuth } from "@app/providers/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useProtectedNavigation } from "@shared/hooks/useProtectedNavigation";
 import { getLocationDetail, getRelatedLocations } from "../api/location.api";
 import { LOCATION_QUERY_KEYS } from "../constants/queryKeys";

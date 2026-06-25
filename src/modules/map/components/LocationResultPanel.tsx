@@ -27,9 +27,9 @@ export const LocationResultPanel = ({
 }: LocationResultPanelProps) => (
   <aside className="location-map__panel">
     <div className="location-map__panel-head">
-      <h2>Phong gan day</h2>
+      <h2>Kết quả tìm kiếm</h2>
       <span>
-        {isFetching && !isLoading ? "Dang cap nhat..." : `${total} ket qua`}
+        {isFetching && !isLoading ? "Dang cap nhat..." : `${total} phòng`}
       </span>
     </div>
 
@@ -42,13 +42,13 @@ export const LocationResultPanel = ({
     {isError && (
       <div className="location-map__state">
         <p>{errorMessage}</p>
-        <Button onClick={onRetry}>Thu lai</Button>
+        <Button onClick={onRetry}>Thử lại</Button>
       </div>
     )}
 
     {!isLoading && !isError && locations.length === 0 && (
       <div className="location-map__state">
-        Khong co phong nao trong ban kinh {formatRadius(radiusKm)}.
+        Không có phòng nào trong bán kính {formatRadius(radiusKm)}.
       </div>
     )}
 

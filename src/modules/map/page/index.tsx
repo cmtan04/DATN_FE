@@ -77,30 +77,11 @@ export const LocationMap = () => {
     <main className="location-map">
       <div className="location-map__header">
         <div>
-          <h1 className="location-map__title">Tim phong gan ban</h1>
+          <h1 className="location-map__title">Tìm phòng gần bạn</h1>
           <p className="location-map__subtitle">
-            Chon vi tri tren ban do hoac tim dia chi de xem phong trong ban
-            kinh.
+            Chọn một địa điểm trên bản đồ hoặc nhập địa chỉ để tìm kiếm các
+            phòng gần đó.
           </p>
-        </div>
-        <div className="location-map__radius">
-          <div className="location-map__radius-head">
-            <span className="location-map__radius-label">
-              Ban kinh tim kiem
-            </span>
-            <strong className="location-map__radius-value">
-              {formatRadius(sliderRadiusKm)}
-            </strong>
-          </div>
-          <Slider
-            min={MIN_RADIUS_KM}
-            max={MAX_RADIUS_KM}
-            step={RADIUS_STEP_KM}
-            value={sliderRadiusKm}
-            tooltip={{ formatter: (value) => formatRadius(value ?? 0) }}
-            onChange={(value) => setSliderRadiusKm(value)}
-            onChangeComplete={(value) => setRadiusKm(value)}
-          />
         </div>
       </div>
 
@@ -129,18 +110,39 @@ export const LocationMap = () => {
             onPopupClose={handlePopupClose}
           />
         </div>
+        <div>
+          <div className="location-map__radius">
+            <div className="location-map__radius-head">
+              <span className="location-map__radius-label">
+                Bán kính tìm kiếm
+              </span>
+              <strong className="location-map__radius-value">
+                {formatRadius(sliderRadiusKm)}
+              </strong>
+            </div>
+            <Slider
+              min={MIN_RADIUS_KM}
+              max={MAX_RADIUS_KM}
+              step={RADIUS_STEP_KM}
+              value={sliderRadiusKm}
+              tooltip={{ formatter: (value) => formatRadius(value ?? 0) }}
+              onChange={(value) => setSliderRadiusKm(value)}
+              onChangeComplete={(value) => setRadiusKm(value)}
+            />
+          </div>
 
-        <LocationResultPanel
-          locations={locations}
-          radiusKm={radiusKm}
-          total={total}
-          isLoading={isLoading}
-          isFetching={isFetching}
-          isError={isError}
-          errorMessage={errorMessage}
-          onRetry={() => void refetch()}
-          onOpenDetail={handleOpenDetail}
-        />
+          <LocationResultPanel
+            locations={locations}
+            radiusKm={radiusKm}
+            total={total}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            isError={isError}
+            errorMessage={errorMessage}
+            onRetry={() => void refetch()}
+            onOpenDetail={handleOpenDetail}
+          />
+        </div>
       </div>
     </main>
   );

@@ -2,9 +2,12 @@ import { axiosClient } from "@shared/services/axiosClient";
 import type {
   GetLocationsQuery,
   GetLocationsResponse,
+  BookingStatus,
   LocationDetail,
-  LocationRadiusSearchParamDto,
   LocationType,
+  Booking,
+  LocationRadiusSearchParam,
+  CreateBookingRequest,
 } from "../types";
 import { LocationEndpoint } from "./location.endpoints";
 
@@ -54,7 +57,7 @@ export const getLocationByFilter = async (
 };
 
 export const getLocationsNearCoordinates = async (
-  params: LocationRadiusSearchParamDto,
+  params: LocationRadiusSearchParam,
 ): Promise<GetLocationsResponse> => {
   const response = await axiosClient.get<GetLocationsResponse>(
     LocationEndpoint.GET_LOCATIONS,
@@ -103,4 +106,35 @@ export const getAvailableRooms = async (params: {
     { params },
   );
   return response.data.availableRooms;
+};
+
+export const createBooking = async (
+  params: CreateBookingRequest,
+): Promise<Booking> => {
+  const response = await axiosClient.post(
+    LocationEndpoint.CREATE_BOOKING,
+    params,
+  );
+  return response.data;
+};
+
+export const updateBookingStatus = async (params: {
+  bookingId: string | number;
+  status: BookingStatus;
+}): Promise<void> => {
+  await axiosClient.patch(
+    LocationEndpoint.UPDATE_BOOKING_STATUS.replace(
+      ":id",
+      String(params.bookingId),
+    ),
+    { status: params.status },
+  );
+};
+
+export const cancelBooking = async (
+  bookingId: string | number,
+): Promise<void> => {
+  await axiosClient.delete(
+    LocationEndpoint.CANCEL_BOOKING.replace(":id", String(bookingId)),
+  );
 };

@@ -27,7 +27,7 @@ import {
 } from "@ant-design/icons";
 import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@app/providers/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ROUTER_PATH } from "@app/router";
 import { useProtectedNavigation } from "@shared/hooks/useProtectedNavigation";
 import {
@@ -66,9 +66,9 @@ export const TopBar = () => {
 
   const profile = user?.profile;
   const displayName =
-    profile?.fullName ?? user?.fullName ?? user?.email ?? "Tai khoan";
+    profile?.fullName ?? (user as any)?.fullName ?? user?.email ?? "Tai khoan";
   const phoneNumber =
-    profile?.phoneNumber ?? user?.phoneNumber ?? "Chua cap nhat";
+    profile?.phoneNumber ?? (user as any)?.phoneNumber ?? "Chua cap nhat";
   const avatarUrl = profile?.avatarUrl;
   const avatarText = displayName.trim().charAt(0).toUpperCase() || "U";
   const ownerRequestStatus = user?.ownerRequestStatus ?? 0;
@@ -78,7 +78,9 @@ export const TopBar = () => {
   const canShowOwnerRequestAction =
     isAuthenticated && !isOwner && !isOwnerRequestApproved;
   const notifications = notificationsQuery.data ?? [];
-  const unreadNotificationCount = notifications.filter((item) => !item.isRead).length;
+  const unreadNotificationCount = notifications.filter(
+    (item) => !item.isRead,
+  ).length;
 
   const navItems = useMemo(
     () => [
@@ -153,7 +155,9 @@ export const TopBar = () => {
     submitOwnerRequest.mutate(undefined, {
       onSuccess: (updatedUser) => {
         setUser(updatedUser);
-        message.success("Da gui yeu cau dang ki lam chu phong. Vui long cho duyet.");
+        message.success(
+          "Da gui yeu cau dang ki lam chu phong. Vui long cho duyet.",
+        );
         closeHostRequest();
       },
       onError: () => {
@@ -184,7 +188,9 @@ export const TopBar = () => {
           dataSource={notifications}
           renderItem={(item) => (
             <List.Item
-              className={item.isRead ? undefined : "topbar__notification--unread"}
+              className={
+                item.isRead ? undefined : "topbar__notification--unread"
+              }
               onClick={() => handleNotificationClick(item.id)}
             >
               <List.Item.Meta
@@ -202,7 +208,10 @@ export const TopBar = () => {
           )}
         />
       ) : (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Chua co thong bao." />
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Chua co thong bao."
+        />
       )}
     </div>
   );
@@ -366,7 +375,10 @@ export const TopBar = () => {
           {isAuthenticated ? (
             <>
               <div className="topbar__drawer-user">
-                <Avatar src={avatarUrl} icon={!avatarUrl ? <UserOutlined /> : null}>
+                <Avatar
+                  src={avatarUrl}
+                  icon={!avatarUrl ? <UserOutlined /> : null}
+                >
                   {!avatarUrl ? avatarText : null}
                 </Avatar>
                 <div>
@@ -437,7 +449,11 @@ export const TopBar = () => {
             column={1}
             items={[
               { key: "fullName", label: "Ho ten", children: displayName },
-              { key: "email", label: "Email", children: user?.email ?? "Chua cap nhat" },
+              {
+                key: "email",
+                label: "Email",
+                children: user?.email ?? "Chua cap nhat",
+              },
               {
                 key: "phoneNumber",
                 label: "So dien thoai",

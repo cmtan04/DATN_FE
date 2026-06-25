@@ -5,13 +5,15 @@ import {
   ExclamationCircleOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
-import { Alert, Button, Card, Descriptions, Result, Spin } from "antd";
+import { Alert, App, Button, Card, Descriptions, QRCode, Result, Spin, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { ROUTER_PATH } from "@app/router/routes";
 import { getPaymentErrorMessage } from "../../utils/paymentErrors";
 import { usePaymentCheckUpdate } from "../../hooks/usePaymentCheckUpdate";
 import { BOOKING_STATUS, PAYMENT_STATUS } from "../../types";
 import type { PaymentCheckUpdateResponse } from "../../types";
+import { simulatePaymentSuccess } from "../../api/payment.api";
 import "./style.scss";
 
 const toAbsolutePath = (path: string) =>
@@ -83,11 +85,26 @@ const getResultCopy = (payment: PaymentCheckUpdateResponse) => {
 
 export const PaymentCheckoutResult = () => {
   const { token } = useParams();
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const { data, error, isError, isFetching, refetch } =
     usePaymentCheckUpdate(token);
   const locationsPath = toAbsolutePath(ROUTER_PATH.LOCATIONS);
   const userBookingsPath = toAbsolutePath(ROUTER_PATH.USER_BOOKINGS);
+
+  const simulateMutation = useMutation({
+    mutationFn: () => simulatePaymentSuccess(token ?? ""),
+  });
+
+  const handleSimulateSuccess = async () => {
+    try {
+      await simulateMutation.mutateAsync();
+      message.success("Giả lập thanh toán thành công!");
+      void refetch();
+    } catch (err) {
+      message.error(getPaymentErrorMessage(err));
+    }
+  };
 
   const openCheckout = (checkoutUrl?: string | null) => {
     if (!checkoutUrl) return;
@@ -229,6 +246,50 @@ export const PaymentCheckoutResult = () => {
             },
           ]}
         />
+
+        {data.paymentStatus === PAYMENT_STATUS.UNPAID && (
+          <div
+            className="payment-result__qr-section"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: 24,
+              padding: "24px 0",
+              borderTop: "1px solid #f0f0f0",
+            }}
+          >
+            <Typography.Title level={4} style={{ marginBottom: 16 }}>
+              Mã QR Thanh Toán (payOS Simulation)
+            </Typography.Title>
+            <QRCode
+              value={`2|99|0901234567|CONG TY DAT PHONG||0|0|${data.amount}|Booking ${data.bookingId}|`}
+              size={220}
+              status={simulateMutation.isPending ? "loading" : "active"}
+            />
+            <div style={{ marginTop: 20, width: "100%", maxWidth: 400 }}>
+              <Descriptions column={1} size="small" bordered>
+                <Descriptions.Item label="Ngân hàng">MB Bank (Simulated)</Descriptions.Item>
+                <Descriptions.Item label="Số tài khoản">123456789</Descriptions.Item>
+                <Descriptions.Item label="Chủ tài khoản">CONG TY DAT PHONG</Descriptions.Item>
+                <Descriptions.Item label="Số tiền">{formatCurrency(data.amount, data.currency)}</Descriptions.Item>
+                <Descriptions.Item label="Nội dung">{`Booking ${data.bookingId}`}</Descriptions.Item>
+              </Descriptions>
+            </div>
+            <Button
+              type="primary"
+              style={{
+                marginTop: 20,
+                backgroundColor: "#52c41a",
+                borderColor: "#52c41a",
+              }}
+              loading={simulateMutation.isPending}
+              onClick={handleSimulateSuccess}
+            >
+              Giả lập thanh toán thành công
+            </Button>
+          </div>
+        )}
 
         {data.paymentStatus === PAYMENT_STATUS.UNPAID && !data.checkoutUrl ? (
           <Alert

@@ -4,4 +4,5 @@ export const AUTH_ENDPOINT = {
   getOtp: "/otp/send",
   verifyOtp: "/otp/verify",
   resetPassword: "/auth/reset-password",
+  refreshToken: "/auth/refresh-token",
 } as const;

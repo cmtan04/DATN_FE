@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "@modules/auth/api/auth.api";
 import { getAuthErrorMessage } from "@modules/auth/api/auth.errors";
@@ -17,7 +17,7 @@ import type {
   LoginRequiredSource,
   RegisterRequest,
 } from "@modules/auth/types";
-import { AuthContext } from "./authContext";
+import { AuthContext } from "../../modules/auth/context/authContext";
 import type { User } from "@modules/user/type";
 import type { ReactNode } from "react";
 
@@ -61,17 +61,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     retry: false,
   });
 
-  const currentUser = user ?? currentUserQuery.data ?? null;
+  useEffect(() => {
+    setUser(currentUserQuery.data ?? null);
+  }, [currentUserQuery.data]);
 
   // Lưu token và user sau khi đăng nhập/đăng kí thành công.
   // Backend có thể không trả user ngay, nên phần user chỉ được set khi response có dữ liệu.
   const persistAuthenticatedSession = useCallback((response: AuthResponse) => {
     persistAuthToken(response);
     setHasToken(authApi.hasAccessToken());
-
-    if (response.user) {
-      setUser(response.user);
-    }
   }, []);
 
   const invalidateAuthSensitiveLocationQueries = useCallback(() => {
@@ -186,8 +184,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const contextValue = useMemo(
     () => ({
-      user: currentUser,
-      isAuthenticated: Boolean(currentUser || hasToken),
+      user: user as User | null, // Đảm bảo user luôn có kiểu User, không phải null. UI sẽ dựa vào isAuthenticated để kiểm tra trạng thái đăng nhập.
+      isAuthenticated: Boolean(user || hasToken),
       isBootstrapping: currentUserQuery.isFetching,
       isSigningIn: signInMutation.isPending,
       isSigningUp: signUpMutation.isPending,
@@ -209,7 +207,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       clearSuppressedLoginRequired,
       authError,
       closeLoginRequired,
-      currentUser,
+      user,
       currentUserQuery.isFetching,
       hasToken,
       loginRequiredRoute,

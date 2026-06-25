@@ -24,7 +24,7 @@ import dayjs from "dayjs";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router/routes";
-import { useAuth } from "@app/providers/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { getPaymentErrorMessage, useCreateCheckout } from "@modules/payment";
 import { useLocationDetail } from "../../hooks/useLocationDetail";
 import {
@@ -47,11 +47,11 @@ const toAbsolutePath = (path: string) =>
 
 const getUserFullName = (
   user: ReturnType<typeof useAuth>["user"],
-): string | undefined => user?.profile?.fullName ?? user?.fullName;
+): string | undefined => user?.profile?.fullName;
 
 const getUserPhoneNumber = (
   user: ReturnType<typeof useAuth>["user"],
-): string | undefined => user?.profile?.phoneNumber ?? user?.phoneNumber;
+): string | undefined => user?.profile?.phoneNumber;
 
 export const LocationBooking = () => {
   const { message } = AntdApp.useApp();
@@ -60,14 +60,8 @@ export const LocationBooking = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const checkoutMutation = useCreateCheckout();
-  const {
-    location,
-    errorMessage,
-    isError,
-    isLoading,
-    isOwner,
-    refetch,
-  } = useLocationDetail(id, { includeSimilar: false });
+  const { location, errorMessage, isError, isLoading, isOwner, refetch } =
+    useLocationDetail(id, { includeSimilar: false });
 
   const detailPath = toAbsolutePath(
     id ? ROUTER_PATH.LOCATION_DETAIL.replace(":id", id) : ROUTER_PATH.LOCATIONS,

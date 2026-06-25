@@ -8,7 +8,7 @@ import {
 } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
-import { useAuth } from "@app/providers/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { FormInput } from "@shared/components/FormInput/formInput";
 import { FormPassword } from "@shared/components/FormPassword/formPassword";
 import { AuthLayout } from "../../components/AuthLayout";
@@ -19,27 +19,27 @@ export const SignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { message } = AntdApp.useApp();
-  const { authError, isSigningUp, signUp } = useAuth();
+  const { isSigningUp, signUp } = useAuth();
   const locationState = location.state as SignInLocationState | null;
-  const redirectPath = locationState?.from?.pathname
-    ? `${locationState.from.pathname}${locationState.from.search ?? ""}${
-        locationState.from.hash ?? ""
-      }`
-    : ROUTER_PATH.HOME;
 
   const handleSubmit = async (values: SignUpFormValues) => {
     try {
-      const response = await signUp({
+      await signUp({
         fullName: values.fullName,
         email: values.email,
         phoneNumber: values.phoneNumber,
         password: values.password,
       });
 
-      message.success(response.message || "Đăng ký tài khoản thành công.");
-      navigate(redirectPath, { replace: true });
+      message.success(
+        "Đăng ký tài khoản thành công. Giờ đây, bạn có thể đăng nhập bằng tài khoản vừa tạo.",
+      );
+      navigate(ROUTER_PATH.SIGNIN, { state: locationState });
     } catch {
       // AuthProvider already normalizes auth errors for a consistent Alert.
+      message.error(
+        "Đăng ký thất bại. Vui lòng kiểm tra thông tin và thử lại.",
+      );
     }
   };
 
@@ -48,15 +48,6 @@ export const SignUp = () => {
       <Typography.Title level={1} className="auth-page__title">
         Đăng ký
       </Typography.Title>
-
-      {authError ? (
-        <Alert
-          className="auth-page__alert"
-          message={authError}
-          type="error"
-          showIcon
-        />
-      ) : null}
 
       <Form
         form={form}

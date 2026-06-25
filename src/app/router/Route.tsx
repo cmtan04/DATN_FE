@@ -17,15 +17,11 @@ const UserFavoritesPlaceholder = () => <div>Danh sach phong yeu thich</div>;
 
 export const WebRouter = () => (
   <Routes>
-    <Route path="/" element={<Navigate to={ROUTER_PATH.HOME} replace />} />
-    <Route path={ROUTER_NAME.SIGNIN} element={<SignIn />} />
-    <Route path={ROUTER_NAME.SIGNUP} element={<SignUp />} />
-    <Route
-      path={ROUTER_NAME.FORGOT_PASSWORD}
-      element={<ForgotPassword />}
-    />
-
     <Route element={<WebLayout />}>
+      <Route path="/" element={<Navigate to={ROUTER_PATH.HOME} replace />} />
+      <Route path={ROUTER_NAME.SIGNIN} element={<SignIn />} />
+      <Route path={ROUTER_NAME.SIGNUP} element={<SignUp />} />
+      <Route path={ROUTER_NAME.FORGOT_PASSWORD} element={<ForgotPassword />} />
       <Route path={ROUTER_NAME.HOME} element={<HomePage />} />
       <Route path={ROUTER_NAME.LOCATIONS} element={<LocationList />} />
       <Route path={ROUTER_NAME.LOCATION_DETAIL} element={<LocationDetail />} />
@@ -58,7 +54,5 @@ export const WebRouter = () => (
         <Route path={ROUTER_NAME.PACKAGE} element={<div>Package</div>} />
       </Route>
     </Route>
-
-    <Route path="*" element={<Navigate to={ROUTER_PATH.SIGNIN} replace />} />
   </Routes>
 );

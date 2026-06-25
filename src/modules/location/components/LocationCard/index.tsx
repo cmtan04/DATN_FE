@@ -30,7 +30,6 @@ export const LocationCard = ({
   const { liked, isTogglingFavourite, handleToggleFavourite } =
     useToggleLocationFavourite(location.id, location.isFavourite);
 
-  console.log("Rendering LocationCard for", location.name, "Liked:", liked);
   const title = location.name;
   const address = location.address?.fullAddress ?? DEFAULT_ADDRESS;
   const priceLabel = formatLocationPrice(location.price, location.priceUnit);

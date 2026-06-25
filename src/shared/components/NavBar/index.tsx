@@ -24,7 +24,7 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import "./style.scss";
 import { ROUTER_PATH } from "@/app/router/routes";
-import { useAuth } from "@/app/providers/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import {
   useMarkNotificationRead,
   useNotifications,
@@ -37,8 +37,7 @@ export function NavBar() {
   const markNotificationRead = useMarkNotificationRead();
 
   const profile = user?.profile;
-  const displayName =
-    profile?.fullName ?? user?.fullName ?? user?.email ?? "Tai khoan";
+  const displayName = profile?.fullName ?? user?.email ?? "Tai khoan";
   const avatarUrl = profile?.avatarUrl;
   const avatarText = displayName.trim().charAt(0).toUpperCase() || "U";
   const notifications = notificationsQuery.data ?? [];
@@ -59,29 +58,57 @@ export function NavBar() {
   const accountMenuItems: MenuProps["items"] = useMemo(
     () => [
       {
+        key: "profile",
+        label: (
+          <div style={{ padding: "4px 0" }}>
+            <div
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                color: "#0f1923",
+              }}
+            >
+              {displayName}
+            </div>
+            <div
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "0.78rem",
+                color: "#6b7280",
+              }}
+            >
+              {user?.email ?? "Email khong xac dinh"}
+            </div>
+          </div>
+        ),
+        disabled: true,
+      },
+      { type: "divider" },
+      {
         key: ROUTER_PATH.USER_PROFILE,
-        icon: <IdcardOutlined />,
-        label: "Thong tin ca nhan",
+        icon: <UserOutlined />,
+        label: "Thông tin cá nhân",
       },
       {
         key: ROUTER_PATH.USER_BOOKINGS,
         icon: <HistoryOutlined />,
-        label: "Lich su dat phong",
+        label: "Lịch sử đặt phòng",
       },
       {
         key: ROUTER_PATH.USER_FAVORITES,
         icon: <HeartOutlined />,
-        label: "Danh sach yeu thich",
+        label: "Danh sách yêu thích",
       },
       { type: "divider" },
       {
         key: "sign-out",
         danger: true,
         icon: <LogoutOutlined />,
-        label: "Dang xuat",
+        label: "Đăng xuất",
       },
     ],
-    [],
+    [displayName, user?.email],
   );
 
   const handleNavigate = (path: string) => {
@@ -161,7 +188,9 @@ export function NavBar() {
         arrow
         align={{ offset: [0, 20] }}
         trigger={["click"]}
-        getPopupContainer={(triggerNode) => triggerNode.parentElement ?? triggerNode}
+        getPopupContainer={(triggerNode) =>
+          triggerNode.parentElement ?? triggerNode
+        }
       >
         <button type="button" className="avatarTrigger" aria-label="Tai khoan">
           <Avatar src={avatarUrl} icon={!avatarUrl ? <UserOutlined /> : null}>

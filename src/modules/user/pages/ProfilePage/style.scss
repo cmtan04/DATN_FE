@@ -1,122 +1,361 @@
-.profile-page {
-  width: min(1120px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 32px 0 48px;
+@use "@/variables" as *;
 
-  &__header {
+// ── Page shell ───────────────────────────────────────────────────────────────
+.profile-page {
+  min-height: 100vh;
+  background: $background;
+}
+
+// ── Hero banner ──────────────────────────────────────────────────────────────
+.profile-hero {
+  background: $primary;
+  position: relative;
+  overflow: hidden;
+  padding: 48px 24px 80px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("https://images.unsplash.com/photo-1561501900-3701fa6a0864?w=1400&h=400&fit=crop&auto=format")
+      center / cover no-repeat;
+    opacity: 0.12;
+  }
+
+  &__inner {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 24px;
+    align-items: flex-end;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  &__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+
+    .edit-avatar-btn {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: $accent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: $foreground;
+      font-size: 13px;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &__info {
+    flex: 1;
 
     h1 {
-      margin: 0 0 8px;
-      color: #00293a;
-      font-size: 34px;
-      line-height: 1.25;
+      font-family: $font-display;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 6px;
     }
 
-    .ant-typography {
-      margin: 0;
-      color: rgba(0, 0, 0, 0.62);
+    .profile-hero__email {
+      font-family: $font-body;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.72);
+      margin: 0 0 14px;
     }
   }
 
-  &__summary,
-  &__upload-card,
-  &__info-card {
-    border-radius: 8px;
+  &__stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 8px;
+    flex-wrap: wrap;
   }
 
-  &__summary {
+  &__stat {
     text-align: center;
+
+    .stat-val {
+      font-family: $font-display;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $accent;
+      display: block;
+    }
+
+    .stat-lbl {
+      font-family: $font-body;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      display: block;
+      margin-top: 2px;
+    }
+  }
+}
+
+// ── Content ──────────────────────────────────────────────────────────────────
+.profile-content {
+  max-width: 1100px;
+  margin: -40px auto 64px;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: #{$bp-lg}) {
+    grid-template-columns: 1fr;
+    margin-top: -28px;
+  }
+}
+
+// ── Side nav ─────────────────────────────────────────────────────────────────
+.profile-sidenav {
+  background: $card;
+  border-radius: $radius-xl;
+  border: 1px solid $border;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-family: $font-body;
+    font-size: 0.9rem;
+    color: $muted-fg;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $secondary;
+      color: $primary;
+    }
+
+    &.active {
+      background: $secondary;
+      color: $primary;
+      font-weight: 600;
+      border-left-color: $primary;
+    }
+
+    .nav-icon {
+      font-size: 17px;
+      flex-shrink: 0;
+    }
   }
 
-  &__avatar {
-    width: 132px;
-    height: 132px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #f0f5ff;
-    font-size: 52px;
+  &__divider {
+    height: 1px;
+    background: $border;
+    margin: 4px 0;
   }
+}
 
-  &__identity {
-    width: 100%;
+// ── Panel card ───────────────────────────────────────────────────────────────
+.profile-panel {
+  background: $card;
+  border-radius: $radius-xl;
+  border: 1px solid $border;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  &__header {
+    padding: 24px 28px 0;
+    border-bottom: 1px solid $border;
+    margin-bottom: 0;
 
     h2 {
+      font-family: $font-display;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: $foreground;
       margin: 0 0 4px;
-      color: #00293a;
-      font-size: 22px;
-      line-height: 1.3;
-      overflow-wrap: anywhere;
     }
 
-    .ant-typography {
-      color: rgba(0, 0, 0, 0.58);
-      overflow-wrap: anywhere;
+    p {
+      font-family: $font-body;
+      font-size: 0.85rem;
+      color: $muted-fg;
+      margin: 0 0 20px;
     }
   }
 
-  &__uploader {
-    .ant-upload {
-      border-radius: 8px;
+  &__body {
+    padding: 28px;
+  }
+}
+
+// ── Form overrides ───────────────────────────────────────────────────────────
+.profile-form {
+  .ant-form-item-label > label {
+    font-family: $font-body !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    color: $muted-fg !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-select-selector,
+  .ant-picker {
+    border-radius: $radius-md !important;
+    background: #f5f3ef !important;
+    border-color: transparent !important;
+    font-family: $font-body !important;
+
+    &:hover {
+      border-color: $primary !important;
     }
   }
 
-  &__info-card {
-    margin-top: 24px;
+  .ant-input-affix-wrapper:focus-within {
+    border-color: $primary !important;
+    box-shadow: 0 0 0 2px rgba(11, 61, 107, 0.1) !important;
   }
 
-  &__info-list {
+  .form-row-2 {
     display: grid;
-    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    @media (max-width: #{$bp-sm}) {
+      grid-template-columns: 1fr;
+    }
   }
 
-  &__info-item {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+    @media (max-width: #{$bp-md}) {
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: #{$bp-sm}) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-label {
+    font-family: $font-body;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: $muted-fg;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 24px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid $border;
+  }
+}
+
+// ── Action bar ───────────────────────────────────────────────────────────────
+.profile-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 28px;
+  border-top: 1px solid $border;
+  background: #fafaf8;
+}
+
+// ── Notification toggles ─────────────────────────────────────────────────────
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid $border;
 
     &:last-child {
-      padding-bottom: 0;
-      border-bottom: 0;
-    }
-
-    span {
-      color: rgba(0, 0, 0, 0.55);
-    }
-
-    strong {
-      color: #00293a;
-      font-weight: 600;
-      text-align: right;
-      overflow-wrap: anywhere;
+      border-bottom: none;
     }
   }
 
-  @media (max-width: 768px) {
-    width: min(100% - 20px, 1120px);
-    padding-top: 24px;
-
-    &__header {
-      flex-direction: column;
-
-      h1 {
-        font-size: 28px;
-      }
+  &__left {
+    .notif-title {
+      font-family: $font-body;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: $foreground;
+      margin: 0 0 2px;
     }
 
-    &__info-item {
-      flex-direction: column;
-      gap: 4px;
-
-      strong {
-        text-align: left;
-      }
+    .notif-desc {
+      font-family: $font-body;
+      font-size: 0.8rem;
+      color: $muted-fg;
+      margin: 0;
     }
+  }
+}
+
+// ── Password section ─────────────────────────────────────────────────────────
+.password-strength {
+  height: 4px;
+  border-radius: 2px;
+  background: $muted;
+  margin-top: 6px;
+  overflow: hidden;
+
+  &__bar {
+    height: 100%;
+    border-radius: 2px;
+    transition:
+      width 0.3s,
+      background 0.3s;
+  }
+}
+
+// ── Tier badge ───────────────────────────────────────────────────────────────
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: $font-body;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  &.gold {
+    background: linear-gradient(135deg, #f6d365, #fda085);
+    color: #7a4600;
+  }
+
+  &.silver {
+    background: #e8e8e8;
+    color: #555;
+  }
+
+  &.platinum {
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    color: #1a3a5c;
   }
 }

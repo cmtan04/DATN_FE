@@ -26,3 +26,14 @@ export const checkPaymentUpdate = async (
 
   return response.data;
 };
+
+export const simulatePaymentSuccess = async (
+  token: string,
+): Promise<PaymentCheckUpdateResponse> => {
+  const response = await axiosClient.post<PaymentCheckUpdateResponse>(
+    `/payments/simulate-success/${token}`,
+  );
+
+  return response.data;
+};
+

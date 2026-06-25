@@ -105,3 +105,64 @@ export interface LocationDetail {
 }
 
 export type GetLocationDetailResponse = LocationDetail | null;
+
+export type BookingStatus =
+  | "CREATED"
+  | "PENDING_PAYMENT"
+  | "CONFIRMED"
+  | "CANCELLED"
+  | "EXPIRED";
+
+export interface GetAvailableRoomsRequest {
+  locationId: number;
+  startDate: string | Date; // Thường FE gửi lên API dạng string (ISO string) hoặc đối tượng Date
+  endDate: string | Date;
+}
+
+export interface GetAvailableRoomsResponse {
+  availableRooms: number;
+}
+
+export interface CreateBookingRequest {
+  locationId: number;
+  startDate: string | Date;
+  endDate: string | Date;
+  roomNumber: number;
+  note?: string; // Dấu ? giữ nguyên vì đây là trường optional
+  totalAmount: number;
+  currency: string;
+}
+
+export interface Booking {
+  id: number;
+  bookingCode: string;
+  locationId: number;
+  startDate: string | Date;
+  endDate: string | Date;
+  roomNumber: number;
+  note?: string;
+  status: BookingStatus;
+  totalAmount: number;
+  currency: string;
+}
+
+export interface UpdateLocationServicePayload {
+  name: string;
+  isFree: boolean;
+  price?: number;
+  priceUnit?: string;
+  isActive?: boolean;
+}
+
+export interface UpdateLocationContentPayload {
+  description?: string;
+  services?: UpdateLocationServicePayload[];
+}
+
+export interface LocationRadiusSearchParam {
+  lat: number;
+  lng: number;
+  radiusKm: number;
+  page?: number;
+  limit?: number;
+}

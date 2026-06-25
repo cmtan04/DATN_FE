@@ -4,8 +4,6 @@ export interface User {
   userRole?: number;
   ownerRequestStatus?: number;
   status?: string;
-  fullName?: string;
-  phoneNumber?: string;
   profile?: {
     fullName: string;
     phoneNumber: string;
@@ -27,4 +25,9 @@ export interface NotificationItem {
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
 }

@@ -1,13 +1,11 @@
 import { ROUTER_PATH } from "@/app/router/routes";
 import type { AuthResponse } from "@/modules/auth/types";
-import axios, {
-  AxiosError,
-  type InternalAxiosRequestConfig,
-} from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import * as authStorage from "@/shared/services/auth.storage";
+import { AUTH_ENDPOINT } from "@/modules/auth/api/auth.endpoints";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || "";
-const REFRESH_TOKEN_ENDPOINT = "/auth/refresh-token";
+const AUTH_ENDPOINTS = Object.values(AUTH_ENDPOINT);
 
 type RetryableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
@@ -58,7 +56,7 @@ const flushPendingRequests = (error: unknown, accessToken?: string) => {
 
 const refreshAccessToken = async (refreshToken: string) => {
   const { data } = await axios.post<AuthResponse>(
-    `${baseURL}${REFRESH_TOKEN_ENDPOINT}`,
+    `${baseURL}${AUTH_ENDPOINT.refreshToken}`,
     { refreshToken },
     {
       headers: {
@@ -103,6 +101,18 @@ axiosClient.interceptors.response.use(
       !originalRequest ||
       originalRequest._retry
     ) {
+      return Promise.reject(error);
+    }
+
+    if (
+      AUTH_ENDPOINTS.some((endpoint) => originalRequest.url?.includes(endpoint))
+    ) {
+      return Promise.reject(error);
+    }
+
+    const accessToken = authStorage.getAccessToken();
+
+    if (!accessToken) {
       return Promise.reject(error);
     }
 

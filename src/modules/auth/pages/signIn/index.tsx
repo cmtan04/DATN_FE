@@ -8,7 +8,7 @@ import {
 } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
-import { useAuth } from "@app/providers/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { FormInput } from "@shared/components/FormInput/formInput";
 import { FormPassword } from "@shared/components/FormPassword/formPassword";
 import { AuthLayout } from "../../components/AuthLayout";
@@ -19,7 +19,7 @@ export const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { message } = AntdApp.useApp();
-  const { authError, isSigningIn, signIn } = useAuth();
+  const { isSigningIn, signIn } = useAuth();
   const locationState = location.state as SignInLocationState | null;
   const redirectPath = locationState?.from?.pathname
     ? `${locationState.from.pathname}${locationState.from.search ?? ""}${
@@ -29,11 +29,14 @@ export const SignIn = () => {
 
   const handleSubmit = async (values: LoginRequest) => {
     try {
-      const response = await signIn(values);
-      message.success(response.message || "Đăng nhập thành công.");
+      await signIn(values);
+      message.success("Đăng nhập thành công.");
       navigate(redirectPath, { replace: false });
     } catch {
       // AuthProvider already normalizes auth errors for a consistent Alert.
+      message.error(
+        "Đăng nhập thất bại. Vui lòng kiểm tra thông tin và thử lại.",
+      );
     }
   };
 
@@ -42,15 +45,6 @@ export const SignIn = () => {
       <Typography.Title level={1} className="auth-page__title">
         Đăng nhập
       </Typography.Title>
-
-      {authError ? (
-        <Alert
-          className="auth-page__alert"
-          title={authError}
-          type="error"
-          showIcon
-        />
-      ) : null}
 
       <Form
         form={form}

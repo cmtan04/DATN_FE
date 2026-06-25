@@ -5,6 +5,9 @@ export const LocationEndpoint = {
   GET_ALL_LOCATION_TYPE: "/locations/location-types",
   GET_RELATED_LOCATIONS: "/locations/:id/related",
   GET_AVAILABLE_ROOMS: "/booking/available-rooms",
+  CREATE_BOOKING: "/booking",
+  UPDATE_BOOKING_STATUS: "/booking/:id/status",
+  CANCEL_BOOKING: "/booking/:id",
   TOGGLE_FAVORITE_LOCATION: (id: string | number) =>
     `/locations/${id}/toggle-favourite`,
   LOCATION_MEDIA: (id: string | number) => `/locations/${id}/media`,
