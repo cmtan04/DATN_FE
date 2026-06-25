@@ -24,7 +24,7 @@ import dayjs from "dayjs";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router/routes";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { getPaymentErrorMessage, useCreateCheckout } from "@modules/payment";
 import { useLocationDetail } from "../../hooks/useLocationDetail";
 import {

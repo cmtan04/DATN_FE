@@ -131,10 +131,3 @@ export const updateBookingStatus = async (params: {
   );
 };
 
-export const cancelBooking = async (
-  bookingId: string | number,
-): Promise<void> => {
-  await axiosClient.delete(
-    LocationEndpoint.CANCEL_BOOKING.replace(":id", String(bookingId)),
-  );
-};

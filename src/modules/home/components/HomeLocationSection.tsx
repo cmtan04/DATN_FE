@@ -1,5 +1,5 @@
 import { Button, Col, Empty, Row, Skeleton, Typography } from "antd";
-import { LocationCard } from "@/modules/location/components/LocationCard";
+import { LocationCard } from "@/shared/components/LocationCard";
 import type { HomeLocation } from "../types";
 
 interface HomeLocationSectionProps {

@@ -1,7 +1,7 @@
 import { ArrowLeftOutlined, LoginOutlined } from "@ant-design/icons";
 import { Button, Modal, Space, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { ROUTER_PATH } from "@app/router";
 import "./loginRequiredModal.scss";
 

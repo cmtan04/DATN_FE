@@ -6,7 +6,7 @@ import type {
   LoginRequiredSource,
   RegisterRequest,
 } from "@modules/auth/types";
-import type { User } from "@modules/user/type";
+import type { User } from "@/shared/types/user.types";
 
 export interface AuthContextValue {
   user: User | null;

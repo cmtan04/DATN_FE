@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useProtectedNavigation } from "@shared/hooks/useProtectedNavigation";
 import {
   createBooking,
-  cancelBooking,
   updateBookingStatus,
 } from "../api/location.api";
 import type { BookingStatus } from "../types";
@@ -54,8 +53,9 @@ export const useLocationBooking = (locationid: string | number) => {
   });
 
   const cancelBookingMutation = useMutation({
-    mutationFn: (bookingId: string | number) => {
-      return cancelBooking(bookingId);
+    mutationFn: async (bookingId: string | number) => {
+      const { userApi } = await import("@modules/user/api/user.api");
+      return userApi.cancelBooking(bookingId);
     },
     onSuccess: () => {
       // Handle successful booking cancellation, e.g., show a success message or refresh booking list

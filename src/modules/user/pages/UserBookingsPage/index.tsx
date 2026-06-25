@@ -28,7 +28,7 @@ import {
 import { Link, useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useUserBookings } from "../../hooks/useUserBookings";
-import { cancelBooking } from "@/modules/location/api/location.api";
+import { userApi } from "../../api/user.api";
 import dayjs from "dayjs";
 import "./style.scss";
 
@@ -229,7 +229,7 @@ export function UserBookingsPage() {
   };
 
   const cancelMutation = useMutation({
-    mutationFn: (bookingId: string | number) => cancelBooking(bookingId),
+    mutationFn: (bookingId: string | number) => userApi.cancelBooking(bookingId),
     onSuccess: () => {
       msgApi.success(
         "Đã hủy đặt phòng thành công. Hoàn tiền trong 3–5 ngày làm việc.",

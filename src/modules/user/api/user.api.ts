@@ -95,4 +95,7 @@ export const userApi = {
       };
     });
   },
+  async cancelBooking(bookingId: string | number): Promise<void> {
+    await axiosClient.delete(`/booking/${bookingId}`);
+  },
 };

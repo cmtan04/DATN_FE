@@ -1,4 +1,4 @@
-import { useAuth } from "../../modules/auth/hooks/useAuth";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { useNotificationStream } from "@/modules/user/hooks/useNotificationStream";
 export const NotificationStream = () => {
   const { isAuthenticated, user } = useAuth();

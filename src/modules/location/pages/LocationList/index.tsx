@@ -2,7 +2,7 @@ import { AppstoreOutlined, EnvironmentOutlined } from "@ant-design/icons";
 import { Button, Col, Row } from "antd";
 import { isAxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
-import { LocationCard } from "@/modules/location/components/LocationCard";
+import { LocationCard } from "@/shared/components/LocationCard";
 import { LocationFilterDrawer } from "../../components/LocationFilterDrawer";
 import { LocationListMap } from "../../components/LocationListMap";
 import { useLocationList } from "../../hooks/useLocationList";

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
 import type { RegionKey } from "../types";
 import { getfeaturedLocations, getNewLocations } from "../api/home.api";
-import { HOME_QUERY_KEYS } from "../constants/queryKeys";
+import { HOME_QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { useHomeData } from "./useHomeData";
 
 export const useHomePage = () => {

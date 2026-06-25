@@ -8,7 +8,7 @@ import {
 } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@app/router";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { FormInput } from "@shared/components/FormInput/formInput";
 import { FormPassword } from "@shared/components/FormPassword/formPassword";
 import { AuthLayout } from "../../components/AuthLayout";

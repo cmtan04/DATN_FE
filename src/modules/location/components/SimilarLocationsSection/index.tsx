@@ -1,5 +1,5 @@
 import { Col, Row, Typography } from "antd";
-import { LocationCard } from "@/modules/location/components/LocationCard";
+import { LocationCard } from "@/shared/components/LocationCard";
 import type { LocationListItem } from "../../types";
 
 interface SimilarLocationsSectionProps {

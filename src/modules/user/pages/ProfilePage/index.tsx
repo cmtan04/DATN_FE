@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@/app/router/routes";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { FormPassword } from "@shared/components/FormPassword/formPassword";
 import "./style.scss";
 import { FormInput } from "@/shared/components";

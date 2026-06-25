@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
-import { LoginRequiredModal } from "@modules/auth/components/LoginRequiredModal";
+import { LoginRequiredModal } from "@/shared/components/LoginRequiredModal";
 import { Footer, NavBar } from "@shared/components";
 import "./webLayout.scss";
 

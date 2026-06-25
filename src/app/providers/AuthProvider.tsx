@@ -8,7 +8,7 @@ import {
 } from "@/shared/services/auth.storage";
 import { ROUTER_PATH } from "@app/router";
 import { userApi } from "@modules/user/api/user.api";
-import { HOME_QUERY_KEYS } from "@modules/home/constants/queryKeys";
+import { HOME_QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { LOCATION_QUERY_KEYS } from "@modules/location/constants/queryKeys";
 import type {
   AuthRedirectLocation,
@@ -17,8 +17,8 @@ import type {
   LoginRequiredSource,
   RegisterRequest,
 } from "@modules/auth/types";
-import { AuthContext } from "../../modules/auth/context/authContext";
-import type { User } from "@modules/user/type";
+import { AuthContext } from "@/shared/contexts/authContext";
+import type { User } from "@/shared/types/user.types";
 import type { ReactNode } from "react";
 
 const currentUserQueryKey = ["auth", "current-user"] as const;

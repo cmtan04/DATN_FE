@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { HOME_QUERY_KEYS } from "@modules/home/constants/queryKeys";
+import { HOME_QUERY_KEYS } from "@/shared/constants/queryKeys";
 import { toggleFavoriteLocation } from "../api/location.api";
 import { LOCATION_QUERY_KEYS } from "../constants/queryKeys";
 import type { LocationDetail } from "../types";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/shared/hooks/useAuth";
 import { message } from "antd";
 
 export const useToggleLocationFavourite = (

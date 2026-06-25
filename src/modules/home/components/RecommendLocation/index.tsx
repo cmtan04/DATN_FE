@@ -1,5 +1,5 @@
 import { Col, Empty, Row, Skeleton } from "antd";
-import { LocationCard } from "@/modules/location/components/LocationCard";
+import { LocationCard } from "@/shared/components/LocationCard";
 import type { HomeOverviewData } from "../../types";
 import "./styles.scss";
 

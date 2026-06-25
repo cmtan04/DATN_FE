@@ -24,7 +24,7 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import "./style.scss";
 import { ROUTER_PATH } from "@/app/router/routes";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useAuth } from "@/shared/hooks/useAuth";
 import {
   useMarkNotificationRead,
   useNotifications,
